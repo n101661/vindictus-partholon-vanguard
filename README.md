@@ -114,34 +114,34 @@ Constraints:
 - 1 <= characters.length <= 27
 - character[i].length == 5
 - character[i] consists `unique` value
-- the number of specialties is about 42
+- The number of specialties is about 42
 
 ## Character
 
-| Character | Specialties |
-| --- | --- |
-| 利斯塔 | </br></br></br></br> |
-| 菲歐娜 | </br></br></br></br> |
-| 依菲 | 占星術</br>深沉之心</br>遠程射擊</br>淨化一擊</br>元素魔法師 |
-| 卡魯 | </br></br></br></br> |
-| 凱 | </br></br></br></br> |
-| 薇拉 | </br></br></br></br> |
-| 赫克 | 航海術</br>堅韌耐性</br>超凡之勢</br>巨型武器</br>浪人劍客 |
-| 玲 | 華麗身世</br>止水月步</br>神出鬼沒</br>淨化一擊</br>花瓣誓言 |
-| 艾瑞莎 | 闇之明瞳</br>野生動物知識</br>神出鬼沒</br>先發制人</br>時空支配者 |
-| 赫基 | </br></br></br></br> |
-| 蒂莉亞 | 華麗身世</br>堅韌耐性</br>鋒利之刃</br>巨型武器</br>信念守護者 |
-| 彌莉 | </br></br></br></br> |
-| 葛嵐頓 | </br></br></br></br> |
-| 繆兒 | 航海術</br>深沉之心</br>神出鬼沒</br>遠程射擊</br>空間魔女 |
-| 蓓爾 | 鐵胃</br>止水月步</br>先發制人</br>巨型武器</br>時間的漂流者 |
-| 璃朔 | 占星術</br>卓越平衡</br>謹慎戰術</br>連續打擊</br>黎明氏族 |
-| 凱爾 | 華麗身世</br>堅韌耐性</br>鋒利之刃</br>連續打擊</br>正義使者 |
-| 泰莎 | 卓越平衡</br>闇之明瞳</br>連續打擊</br>復仇之影</br>愛恨交織的獵人 |
-| 丹雅 | 占星術</br>堅韌耐性</br>神出鬼沒</br>淨化一擊</br>靈魂武士 |
-| 蕾媞 | 航海術</br>卓越平衡</br>遠程射擊</br>巨型武器</br>爆炸愛好者 |
-| 拉緹雅 | 止水月步</br>野生動物知識</br>謹慎戰術</br>巨型武器</br>高潔的獵人 |
-| 泫兒 | 占星術</br>深沉之心</br>謹慎戰術</br>遠程射擊</br>黎明魔女 |
+| Character | English | Specialties |
+| --- | --- | --- |
+| 利斯塔 | Lethita | </br></br></br></br> |
+| 菲歐娜 | Fiona | </br></br></br></br> |
+| 依菲 | Evy | 占星術</br>深沉之心</br>遠程射擊</br>淨化一擊</br>元素魔法師 |
+| 卡魯 | Kalok | </br></br></br></br>無畏巨人 |
+| 凱 | Kay | </br></br></br></br> |
+| 薇拉 | Vella | </br></br></br></br> |
+| 赫克 | Hurk | 航海術</br>堅韌耐性</br>超凡之勢</br>巨型武器</br>浪人劍客 |
+| 玲 | Lynn | 華麗身世</br>止水月步</br>神出鬼沒</br>淨化一擊</br>花瓣誓言 |
+| 艾瑞莎 | Arisha | 闇之明瞳</br>野生動物知識</br>神出鬼沒</br>先發制人</br>時空支配者 |
+| 赫基 | Hagie | </br></br></br></br> |
+| 蒂莉亞 | Delia | 華麗身世</br>堅韌耐性</br>鋒利之刃</br>巨型武器</br>信念守護者 |
+| 彌莉 | Miri | </br></br></br></br> |
+| 葛嵐頓 | Grimden | </br></br></br></br> |
+| 繆兒 | Miul | 航海術</br>深沉之心</br>神出鬼沒</br>遠程射擊</br>空間魔女 |
+| 蓓爾 | Bel | 鐵胃</br>止水月步</br>先發制人</br>巨型武器</br>時間的漂流者 |
+| 璃朔 | Lethor | 占星術</br>卓越平衡</br>謹慎戰術</br>連續打擊</br>黎明氏族 |
+| 凱爾 | Kael | 華麗身世</br>堅韌耐性</br>鋒利之刃</br>連續打擊</br>正義使者 |
+| 泰莎 | Tessa | 卓越平衡</br>闇之明瞳</br>連續打擊</br>復仇之影</br>愛恨交織的獵人 |
+| 丹雅 | Danah | 占星術</br>堅韌耐性</br>神出鬼沒</br>淨化一擊</br>靈魂武士 |
+| 蕾媞 | Letty | 航海術</br>卓越平衡</br>遠程射擊</br>巨型武器</br>爆炸愛好者 |
+| 拉緹雅 | Latiya | 止水月步</br>野生動物知識</br>謹慎戰術</br>巨型武器</br>高潔的獵人 |
+| 泫兒 | Czern | 占星術</br>深沉之心</br>謹慎戰術</br>遠程射擊</br>黎明魔女 |
 
 ## Vocabulary
 

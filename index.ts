@@ -45,7 +45,12 @@ function makeTeams(
     missionRemainedSlots, missionRequiredPoints,
     characters, 0,
     Array<number>(missionDifficulty.length).fill(0), Array<number>(missionDifficulty.length).fill(0)
-  ).currentJoinedCharacters
+  ).joinedCharacters
+}
+
+interface Team {
+  joinedCharacters: number[]
+  totalPoints: number
 }
 
 function makeBestTeams(
@@ -53,10 +58,10 @@ function makeBestTeams(
   missionRemainedSlots: number[], missionRequiredPoints: number[],
   characters: number[], joinedCharacterIndex: number,
   missionGainedPoints: number[], lastJoinedCharacters: number[]
-): { currentJoinedCharacters: number[], totalPoints: number } {
+): Team {
   if (!hasRemainedSlots(missionRemainedSlots) || joinedCharacterIndex == characters.length) {
     return {
-      currentJoinedCharacters: [...lastJoinedCharacters],
+      joinedCharacters: [...lastJoinedCharacters],
       totalPoints: missionGainedPoints.reduce((previous: number, current: number): number => {
         return previous + current
       }, 0)
@@ -64,7 +69,7 @@ function makeBestTeams(
   }
 
   // not join any mission
-  let { currentJoinedCharacters, totalPoints } = makeBestTeams(
+  let { joinedCharacters, totalPoints } = makeBestTeams(
     missionDifficulty, missionSpecialties,
     missionRemainedSlots, missionRequiredPoints,
     characters, joinedCharacterIndex + 1,
@@ -103,12 +108,12 @@ function makeBestTeams(
     lastJoinedCharacters[i] -= 1 << joinedCharacterIndex
 
     if (result.totalPoints > totalPoints) {
-      currentJoinedCharacters = result.currentJoinedCharacters
+      joinedCharacters = result.joinedCharacters
       totalPoints = result.totalPoints
     }
   }
   return {
-    currentJoinedCharacters: currentJoinedCharacters,
+    joinedCharacters: joinedCharacters,
     totalPoints: totalPoints
   }
 }

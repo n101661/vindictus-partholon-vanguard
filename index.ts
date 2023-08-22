@@ -128,7 +128,7 @@ function countBits(v: number): number {
 }
 
 function hasRemainedSlots(slots: number[]): boolean {
-  for (let slot of slots) {
+  for (const slot of slots) {
     if (slot > 0) { return true }
   }
   return false

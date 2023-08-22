@@ -5,18 +5,29 @@ interface Mission {
   grandDiscoveryPoints: number
 }
 
-function maximizeProbabilityBonus(missions: Mission[], characters: string[][]): number[][] {
+function maximizeProbabilityBonus(
+  missions: Mission[],
+  characters: string[][],
+): number[][] {
   const specialtiesMap = parseSpecialtiesMap(missions)
   const convertedCharacters = parseCharacters(specialtiesMap, characters)
 
-  const difficulty = missions.map((m: Mission): number => { return m.difficulty })
+  const difficulty = missions.map((m: Mission): number => {
+    return m.difficulty
+  })
   const specialties = parseMissionSpecialties(specialtiesMap, missions)
-  const slots = missions.map((m: Mission): number => { return m.characterSlots })
-  const requiredPoints = missions.map((m: Mission): number => { return m.grandDiscoveryPoints })
+  const slots = missions.map((m: Mission): number => {
+    return m.characterSlots
+  })
+  const requiredPoints = missions.map((m: Mission): number => {
+    return m.grandDiscoveryPoints
+  })
 
   return makeTeams(
-    difficulty, specialties,
-    slots, requiredPoints,
+    difficulty,
+    specialties,
+    slots,
+    requiredPoints,
     convertedCharacters,
   ).map((charactersBitwise: number): number[] => {
     const characters: number[] = []
@@ -36,15 +47,21 @@ function maximizeProbabilityBonus(missions: Mission[], characters: string[][]): 
 //  - a is the number of characters
 // space complexity: O(a*n)
 function makeTeams(
-  missionDifficulty: number[], missionSpecialties: number[],
-  missionRemainedSlots: number[], missionRequiredPoints: number[],
-  characters: number[]
+  missionDifficulty: number[],
+  missionSpecialties: number[],
+  missionRemainedSlots: number[],
+  missionRequiredPoints: number[],
+  characters: number[],
 ): number[] {
   return makeBestTeams(
-    missionDifficulty, missionSpecialties,
-    missionRemainedSlots, missionRequiredPoints,
-    characters, 0,
-    Array<number>(missionDifficulty.length).fill(0), Array<number>(missionDifficulty.length).fill(0)
+    missionDifficulty,
+    missionSpecialties,
+    missionRemainedSlots,
+    missionRequiredPoints,
+    characters,
+    0,
+    Array<number>(missionDifficulty.length).fill(0),
+    Array<number>(missionDifficulty.length).fill(0),
   ).joinedCharacters
 }
 
@@ -54,33 +71,53 @@ interface Team {
 }
 
 function makeBestTeams(
-  missionDifficulty: number[], missionSpecialties: number[],
-  missionRemainedSlots: number[], missionRequiredPoints: number[],
-  characters: number[], joinedCharacterIndex: number,
-  missionGainedPoints: number[], lastJoinedCharacters: number[]
+  missionDifficulty: number[],
+  missionSpecialties: number[],
+  missionRemainedSlots: number[],
+  missionRequiredPoints: number[],
+  characters: number[],
+  joinedCharacterIndex: number,
+  missionGainedPoints: number[],
+  lastJoinedCharacters: number[],
 ): Team {
-  if (!hasRemainedSlots(missionRemainedSlots) || joinedCharacterIndex == characters.length) {
+  if (
+    !hasRemainedSlots(missionRemainedSlots) ||
+    joinedCharacterIndex == characters.length
+  ) {
     return {
       joinedCharacters: [...lastJoinedCharacters],
-      totalPoints: missionGainedPoints.reduce((previous: number, current: number): number => {
-        return previous + current
-      }, 0)
+      totalPoints: missionGainedPoints.reduce(
+        (previous: number, current: number): number => {
+          return previous + current
+        },
+        0,
+      ),
     }
   }
 
   // not join any mission
   let { joinedCharacters, totalPoints } = makeBestTeams(
-    missionDifficulty, missionSpecialties,
-    missionRemainedSlots, missionRequiredPoints,
-    characters, joinedCharacterIndex + 1,
-    missionGainedPoints, lastJoinedCharacters
+    missionDifficulty,
+    missionSpecialties,
+    missionRemainedSlots,
+    missionRequiredPoints,
+    characters,
+    joinedCharacterIndex + 1,
+    missionGainedPoints,
+    lastJoinedCharacters,
   )
 
   // join mission
   for (let i = 0; i < missionRemainedSlots.length; i++) {
-    if (missionRemainedSlots[i] == 0 || missionGainedPoints[i] == missionRequiredPoints[i]) { continue }
+    if (
+      missionRemainedSlots[i] == 0 ||
+      missionGainedPoints[i] == missionRequiredPoints[i]
+    ) {
+      continue
+    }
 
-    const fitSpecialties = missionSpecialties[i] & characters[joinedCharacterIndex]
+    const fitSpecialties =
+      missionSpecialties[i] & characters[joinedCharacterIndex]
 
     missionSpecialties[i] -= fitSpecialties
     missionRemainedSlots[i]--
@@ -97,10 +134,14 @@ function makeBestTeams(
     }
 
     const result = makeBestTeams(
-      missionDifficulty, missionSpecialties,
-      missionRemainedSlots, missionRequiredPoints,
-      characters, joinedCharacterIndex + 1,
-      gainedPoints, lastJoinedCharacters
+      missionDifficulty,
+      missionSpecialties,
+      missionRemainedSlots,
+      missionRequiredPoints,
+      characters,
+      joinedCharacterIndex + 1,
+      gainedPoints,
+      lastJoinedCharacters,
     )
 
     missionSpecialties[i] += fitSpecialties
@@ -114,7 +155,7 @@ function makeBestTeams(
   }
   return {
     joinedCharacters: joinedCharacters,
-    totalPoints: totalPoints
+    totalPoints: totalPoints,
   }
 }
 
@@ -129,7 +170,9 @@ function countBits(v: number): number {
 
 function hasRemainedSlots(slots: number[]): boolean {
   for (const slot of slots) {
-    if (slot > 0) { return true }
+    if (slot > 0) {
+      return true
+    }
   }
   return false
 }
@@ -143,7 +186,9 @@ function parseSpecialtiesMap(missions: Mission[]): Map<string, number> {
   let counter = 0
   missions.forEach((m: Mission) => {
     m.specialties.forEach((s: string) => {
-      if (sm.has(s)) { return }
+      if (sm.has(s)) {
+        return
+      }
       sm.set(s, 1 << counter++)
     })
   })
@@ -154,7 +199,10 @@ function parseSpecialtiesMap(missions: Mission[]): Map<string, number> {
 //  - a is the number of characters
 //  - b is the number of characters[i]
 // space complexity: O(1)
-function parseCharacters(specialties: Map<string, number>, characters: string[][]): number[] {
+function parseCharacters(
+  specialties: Map<string, number>,
+  characters: string[][],
+): number[] {
   return characters.map((traits: string[]): number => {
     let v = 0
     traits.forEach((s: string) => {
@@ -168,7 +216,10 @@ function parseCharacters(specialties: Map<string, number>, characters: string[][
 //  - n is the number of missions
 //  - m is the number of missions[i].specialties
 // space complexity: O(1)
-function parseMissionSpecialties(specialtiesMap: Map<string, number>, missions: Mission[]): number[] {
+function parseMissionSpecialties(
+  specialtiesMap: Map<string, number>,
+  missions: Mission[],
+): number[] {
   return missions.map((m: Mission): number => {
     let specialties = 0
     m.specialties.forEach((s: string) => {

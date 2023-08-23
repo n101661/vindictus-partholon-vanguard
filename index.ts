@@ -1,23 +1,23 @@
 interface Mission {
   difficulty: number
   specialties: string[]
-  characterSlots: number
+  heroSlots: number
   grandDiscoveryPoints: number
 }
 
 function maximizeProbabilityBonus(
   missions: Mission[],
-  characters: string[][],
+  heroes: string[][],
 ): number[][] {
   const specialtiesMap = parseSpecialtiesMap(missions)
-  const convertedCharacters = parseCharacters(specialtiesMap, characters)
+  const convertedCharacters = parseCharacters(specialtiesMap, heroes)
 
   const difficulty = missions.map((m: Mission): number => {
     return m.difficulty
   })
   const specialties = parseMissionSpecialties(specialtiesMap, missions)
   const slots = missions.map((m: Mission): number => {
-    return m.characterSlots
+    return m.heroSlots
   })
   const requiredPoints = missions.map((m: Mission): number => {
     return m.grandDiscoveryPoints
@@ -29,36 +29,36 @@ function maximizeProbabilityBonus(
     slots,
     requiredPoints,
     convertedCharacters,
-  ).map((charactersBitwise: number): number[] => {
-    const characters: number[] = []
-    for (let bit = 0; charactersBitwise > 0; bit++) {
-      if ((charactersBitwise & 1) > 0) {
-        characters.push(bit)
+  ).map((heroesBitwise: number): number[] => {
+    const heroes: number[] = []
+    for (let bit = 0; heroesBitwise > 0; bit++) {
+      if ((heroesBitwise & 1) > 0) {
+        heroes.push(bit)
       }
-      charactersBitwise >>= 1
+      heroesBitwise >>= 1
     }
-    return characters
+    return heroes
   })
 }
 
 // Approach: recursive
 // time  complexity: O(a^n), where
 //  - n is the number of missions
-//  - a is the number of characters
+//  - a is the number of heroes
 // space complexity: O(a*n)
 function makeTeams(
   missionDifficulty: number[],
   missionSpecialties: number[],
   missionRemainedSlots: number[],
   missionRequiredPoints: number[],
-  characters: number[],
+  heroes: number[],
 ): number[] {
   return makeBestTeams(
     missionDifficulty,
     missionSpecialties,
     missionRemainedSlots,
     missionRequiredPoints,
-    characters,
+    heroes,
     0,
     Array<number>(missionDifficulty.length).fill(0),
     Array<number>(missionDifficulty.length).fill(0),
@@ -75,14 +75,14 @@ function makeBestTeams(
   missionSpecialties: number[],
   missionRemainedSlots: number[],
   missionRequiredPoints: number[],
-  characters: number[],
+  heroes: number[],
   joinedCharacterIndex: number,
   missionGainedPoints: number[],
   lastJoinedCharacters: number[],
 ): Team {
   if (
     !hasRemainedSlots(missionRemainedSlots) ||
-    joinedCharacterIndex == characters.length
+    joinedCharacterIndex == heroes.length
   ) {
     return {
       joinedCharacters: [...lastJoinedCharacters],
@@ -101,7 +101,7 @@ function makeBestTeams(
     missionSpecialties,
     missionRemainedSlots,
     missionRequiredPoints,
-    characters,
+    heroes,
     joinedCharacterIndex + 1,
     missionGainedPoints,
     lastJoinedCharacters,
@@ -116,15 +116,14 @@ function makeBestTeams(
       continue
     }
 
-    const fitSpecialties =
-      missionSpecialties[i] & characters[joinedCharacterIndex]
+    const fitSpecialties = missionSpecialties[i] & heroes[joinedCharacterIndex]
 
     missionSpecialties[i] -= fitSpecialties
     missionRemainedSlots[i]--
     lastJoinedCharacters[i] += 1 << joinedCharacterIndex
 
     const gainedPoints = [...missionGainedPoints]
-    // calculate points of character joined
+    // calculate points of hero joined
     gainedPoints[i] += gainedPoints[i] == 0 ? 10 + missionDifficulty[i] : 5
     // calculate points of fitting specialties
     gainedPoints[i] += countBits(fitSpecialties) * 3
@@ -138,7 +137,7 @@ function makeBestTeams(
       missionSpecialties,
       missionRemainedSlots,
       missionRequiredPoints,
-      characters,
+      heroes,
       joinedCharacterIndex + 1,
       gainedPoints,
       lastJoinedCharacters,
@@ -196,14 +195,14 @@ function parseSpecialtiesMap(missions: Mission[]): Map<string, number> {
 }
 
 // time complexity: O(a*b), where
-//  - a is the number of characters
-//  - b is the number of characters[i]
+//  - a is the number of heroes
+//  - b is the number of heroes[i]
 // space complexity: O(1)
 function parseCharacters(
   specialties: Map<string, number>,
-  characters: string[][],
+  heroes: string[][],
 ): number[] {
-  return characters.map((traits: string[]): number => {
+  return heroes.map((traits: string[]): number => {
     let v = 0
     traits.forEach((s: string) => {
       v += specialties.get(s) ?? 0

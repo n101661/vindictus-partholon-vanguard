@@ -2,7 +2,7 @@
   "semi": false,
   "overrides": [
     {
-      "files": ["characters.ts"],
+      "files": ["src/components/heroes.ts"],
       "options": {
         "printWidth": 120
       }

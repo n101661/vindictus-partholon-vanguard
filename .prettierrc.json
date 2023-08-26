@@ -3,7 +3,7 @@
   "singleAttributePerLine": true,
   "overrides": [
     {
-      "files": ["src/components/heroes.ts"],
+      "files": ["src/components/hero/heroes.ts"],
       "options": {
         "printWidth": 120
       }

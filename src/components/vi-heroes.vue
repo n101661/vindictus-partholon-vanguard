@@ -1,5 +1,8 @@
 <template>
-  <el-select v-model="value">
+  <el-select
+    v-model="value"
+    filterable
+  >
     <el-option
       v-for="item in heroes"
       :key="item"

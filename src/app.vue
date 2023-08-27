@@ -1,4 +1,6 @@
 <template>
+  <vi-form-heroes />
+  <el-divider />
   <h2>The Heroes You Have</h2>
   <vi-select-heroes
     v-model="hero"
@@ -8,6 +10,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue"
+import { ElDivider } from "element-plus"
+import ViFormHeroes from "./components/hero/vi-form.vue"
 import ViSelectHeroes from "./components/hero/vi-select.vue"
 
 const hero = ref<string[]>(getHeroes())

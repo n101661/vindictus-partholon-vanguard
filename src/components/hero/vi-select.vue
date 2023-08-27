@@ -5,7 +5,7 @@
     multiple
   >
     <el-option
-      v-for="item in heroes"
+      v-for="item of heroes"
       :key="item"
       :label="item"
       :value="item"
@@ -14,11 +14,11 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue"
+import { computed, onBeforeMount } from "vue"
 import { ElSelect, ElOption } from "element-plus"
-import { vindictusHeroes } from "./heroes.ts"
+import { vindictusHeroes, Hero } from "./heroes.ts"
 
-const heroes = vindictusHeroes.keys()
+const heroes: string[] = []
 
 const props = defineProps({
   modelValue: {
@@ -39,5 +39,18 @@ const value = computed({
     emit("update:modelValue", value)
     emit("save", value)
   },
+})
+
+onBeforeMount(() => {
+  for (const hero of vindictusHeroes.keys()) {
+    heroes.push(hero)
+  }
+  if (!window.localStorage) return
+  const extraHeroes: Hero[] = JSON.parse(
+    window.localStorage.getItem("extra-heroes") ?? "[]",
+  )
+  for (const hero of extraHeroes) {
+    heroes.push(hero.name)
+  }
 })
 </script>

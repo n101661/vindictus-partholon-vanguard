@@ -6,6 +6,9 @@
     v-model="hero"
     @save="saveHeroes"
   />
+  <el-divider />
+  <h2>Calculate Best Teams</h2>
+  <vi-mission-form />
 </template>
 
 <script setup lang="ts">
@@ -13,6 +16,7 @@ import { ref } from "vue"
 import { ElDivider } from "element-plus"
 import ViFormHeroes from "./components/hero/vi-form.vue"
 import ViSelectHeroes from "./components/hero/vi-select.vue"
+import ViMissionForm from "./components/vi-mission-form.vue"
 
 const hero = ref<string[]>(getHeroes())
 

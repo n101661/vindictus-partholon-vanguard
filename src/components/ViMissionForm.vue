@@ -146,17 +146,13 @@ onBeforeMount(() => {
       heroSlots: 1,
       grandDiscoveryPoints: 0,
     })
-    console.log("push a mission")
   }
 })
 
 function calculateBestTeam(form: FormInstance | undefined) {
-  console.log(missions[0])
-  console.log("-----")
   if (!form) return
 
   form.validate((valid: boolean) => {
-    console.log("valid", valid)
     if (!valid) return
 
     // TODO: calculate best team and show result

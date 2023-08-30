@@ -95,7 +95,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onBeforeMount } from "vue"
+import { ref, reactive, onBeforeMount, onBeforeUpdate } from "vue"
 import {
   FormInstance,
   ElForm,
@@ -146,6 +146,22 @@ onBeforeMount(() => {
       heroSlots: 1,
       grandDiscoveryPoints: 0,
     })
+  }
+})
+
+onBeforeUpdate(() => {
+  if (missions.length > props.count) {
+    missions.splice(props.count, missions.length - props.count)
+  } else {
+    const insufficiency = props.count - missions.length
+    for (let i = 0; i < insufficiency; i++) {
+      missions.push({
+        difficulty: 0,
+        specialties: [],
+        heroSlots: 1,
+        grandDiscoveryPoints: 0,
+      })
+    }
   }
 })
 

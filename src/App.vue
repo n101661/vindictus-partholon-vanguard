@@ -8,17 +8,26 @@
   />
   <el-divider />
   <h2>Calculate Best Teams</h2>
-  <vi-mission-form :count="1" />
+  <el-select v-model="missionCount">
+    <el-option
+      v-for="i in 5"
+      :key="i"
+      :label="i"
+      :value="i"
+    />
+  </el-select>
+  <vi-mission-form :count="missionCount" />
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue"
-import { ElDivider } from "element-plus"
+import { ElDivider, ElSelect, ElOption } from "element-plus"
 import ViFormHeroes from "./components/hero/ViForm.vue"
 import ViSelectHeroes from "./components/hero/ViSelect.vue"
 import ViMissionForm from "./components/ViMissionForm.vue"
 
 const hero = ref<string[]>(getHeroes())
+const missionCount = ref(1)
 
 function saveHeroes(value: string | string[] | undefined) {
   if (!window.localStorage) {

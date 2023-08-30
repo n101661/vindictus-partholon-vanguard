@@ -8,7 +8,7 @@
   />
   <el-divider />
   <h2>Calculate Best Teams</h2>
-  <vi-mission-form />
+  <vi-mission-form :count="1" />
 </template>
 
 <script setup lang="ts">

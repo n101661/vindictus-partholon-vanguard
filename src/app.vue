@@ -14,9 +14,9 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { ElDivider } from "element-plus"
-import ViFormHeroes from "./components/hero/vi-form.vue"
-import ViSelectHeroes from "./components/hero/vi-select.vue"
-import ViMissionForm from "./components/vi-mission-form.vue"
+import ViFormHeroes from "./components/hero/ViForm.vue"
+import ViSelectHeroes from "./components/hero/ViSelect.vue"
+import ViMissionForm from "./components/ViMissionForm.vue"
 
 const hero = ref<string[]>(getHeroes())
 

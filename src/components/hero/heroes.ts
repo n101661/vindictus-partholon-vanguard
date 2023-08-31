@@ -27,3 +27,32 @@ export interface Hero {
   name: string
   specialties: string[]
 }
+
+const names = new Map<string, string>([
+  ["Lethita", "利斯塔"],
+  ["Fiona", "菲歐娜"],
+  ["Evy", "依菲"],
+  ["Kalok", "卡魯"],
+  ["Kay", "凱"],
+  ["Vella", "薇拉"],
+  ["Hurk", "赫克"],
+  ["Lynn", "玲"],
+  ["Arisha", "艾瑞莎"],
+  ["Hagie", "赫基"],
+  ["Delia", "蒂莉亞"],
+  ["Miri", "彌莉"],
+  ["Grimden", "葛嵐頓"],
+  ["Miul", "繆兒"],
+  ["Bel", "蓓爾"],
+  ["Lethor", "璃朔"],
+  ["Kael", "凱爾"],
+  ["Tessa", "泰莎"],
+  ["Danah", "丹雅"],
+  ["Letty", "蕾媞"],
+  ["Latiya", "拉緹雅"],
+  ["Czern", "泫兒"],
+])
+
+export function getName(id: string): string {
+  return names.get(id) ?? id
+}

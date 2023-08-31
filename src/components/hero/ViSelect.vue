@@ -7,7 +7,7 @@
     <el-option
       v-for="item of heroes"
       :key="item"
-      :label="item"
+      :label="getHeroName(item)"
       :value="item"
     />
   </el-select>
@@ -16,7 +16,7 @@
 <script lang="ts" setup>
 import { computed, onBeforeMount } from "vue"
 import { ElSelect, ElOption } from "element-plus"
-import { vindictusHeroes, Hero } from "./heroes.ts"
+import { vindictusHeroes, Hero, getName as getHeroName } from "./heroes.ts"
 
 const heroes: string[] = []
 

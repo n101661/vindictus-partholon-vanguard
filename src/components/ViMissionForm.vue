@@ -111,7 +111,7 @@ import {
   ElInput,
   ElButton,
 } from "element-plus"
-import { vindictusHeroes } from "./hero/heroes.ts"
+import { vindictusHeroes, getName as getHeroName } from "./hero/heroes.ts"
 
 const difficultyOptions: DifficultyOption[] = [
   {
@@ -199,7 +199,7 @@ function calculateBestTeam(form: FormInstance | undefined) {
 
     bestTeams.forEach((heroIndices, i) => {
       missions[i].teammates = heroIndices.map((j): string => {
-        return props.heroes[j]
+        return getHeroName(props.heroes[j])
       })
     })
   })
@@ -228,7 +228,10 @@ function calBestTeams(
   heroSpecialties: string[][],
 ): number[][] {
   const specialtiesMap = parseSpecialtiesMap(missions)
-  const convertedHeroSpecialties = parseCharacters(specialtiesMap, heroSpecialties)
+  const convertedHeroSpecialties = parseCharacters(
+    specialtiesMap,
+    heroSpecialties,
+  )
 
   const difficulty = missions.map((m: Mission): number => {
     return m.difficulty
@@ -334,7 +337,8 @@ function makeBestTeams(
       continue
     }
 
-    const fitSpecialties = missionSpecialties[i] & heroSpecialties[joinedCharacterIndex]
+    const fitSpecialties =
+      missionSpecialties[i] & heroSpecialties[joinedCharacterIndex]
 
     missionSpecialties[i] -= fitSpecialties
     missionRemainedSlots[i]--

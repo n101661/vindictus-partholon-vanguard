@@ -3,7 +3,7 @@
   <el-divider />
   <h2>The Heroes You Have</h2>
   <vi-select-heroes
-    v-model="hero"
+    v-model="heroes"
     @save="saveHeroes"
   />
   <el-divider />
@@ -18,7 +18,10 @@
       />
     </el-select>
   </el-form-item>
-  <vi-mission-form :count="missionCount" />
+  <vi-mission-form
+    :count="missionCount"
+    :heroes="heroes"
+  />
 </template>
 
 <script setup lang="ts">
@@ -28,7 +31,7 @@ import ViFormHeroes from "./components/hero/ViForm.vue"
 import ViSelectHeroes from "./components/hero/ViSelect.vue"
 import ViMissionForm from "./components/ViMissionForm.vue"
 
-const hero = ref<string[]>(getHeroes())
+const heroes = ref<string[]>(getHeroes())
 const missionCount = ref(1)
 
 function saveHeroes(value: string | string[] | undefined) {

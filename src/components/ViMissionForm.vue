@@ -84,6 +84,12 @@
           :min="1"
         />
       </el-form-item>
+      <el-form-item
+        label="Teammates"
+        :prop="i - 1 + '.teammates'"
+      >
+        {{ missions[i - 1].teammates }}
+      </el-form-item>
     </div>
   </el-form>
   <el-button
@@ -128,9 +134,13 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
+  heroes: {
+    type: Array<string>,
+    default: [] as string[],
+  },
 })
 const formRef = ref<FormInstance>()
-const missions = reactive<Mission[]>([])
+const missions = reactive<MissionWithTeammates[]>([])
 
 onBeforeMount(() => {
   vindictusHeroes.forEach((values: string[]) => {
@@ -145,6 +155,7 @@ onBeforeMount(() => {
       specialties: [],
       heroSlots: 1,
       grandDiscoveryPoints: 0,
+      teammates: [],
     })
   }
 })
@@ -160,6 +171,7 @@ onBeforeUpdate(() => {
         specialties: [],
         heroSlots: 1,
         grandDiscoveryPoints: 0,
+        teammates: [],
       })
     }
   }
@@ -171,7 +183,25 @@ function calculateBestTeam(form: FormInstance | undefined) {
   form.validate((valid: boolean) => {
     if (!valid) return
 
-    // TODO: calculate best team and show result
+    const bestTeams = calBestTeams(
+      missions.map((mission): Mission => {
+        return {
+          difficulty: mission.difficulty,
+          specialties: mission.specialties,
+          heroSlots: mission.heroSlots,
+          grandDiscoveryPoints: mission.grandDiscoveryPoints,
+        }
+      }),
+      props.heroes.map((hero): string[] => {
+        return vindictusHeroes.get(hero) ?? []
+      }),
+    )
+
+    bestTeams.forEach((heroIndices, i) => {
+      missions[i].teammates = heroIndices.map((j): string => {
+        return props.heroes[j]
+      })
+    })
   })
 }
 </script>
@@ -184,17 +214,21 @@ interface Mission {
   grandDiscoveryPoints: number
 }
 
+interface MissionWithTeammates extends Mission {
+  teammates: string[]
+}
+
 interface DifficultyOption {
   label: string
   value: -2 | 0 | 2
 }
 
-function maximizeProbabilityBonus(
+function calBestTeams(
   missions: Mission[],
-  heroes: string[][],
+  heroSpecialties: string[][],
 ): number[][] {
   const specialtiesMap = parseSpecialtiesMap(missions)
-  const convertedCharacters = parseCharacters(specialtiesMap, heroes)
+  const convertedHeroSpecialties = parseCharacters(specialtiesMap, heroSpecialties)
 
   const difficulty = missions.map((m: Mission): number => {
     return m.difficulty
@@ -212,7 +246,7 @@ function maximizeProbabilityBonus(
     specialties,
     slots,
     requiredPoints,
-    convertedCharacters,
+    convertedHeroSpecialties,
   ).map((heroesBitwise: number): number[] => {
     const heroes: number[] = []
     for (let bit = 0; heroesBitwise > 0; bit++) {
@@ -235,14 +269,14 @@ function makeTeams(
   missionSpecialties: number[],
   missionRemainedSlots: number[],
   missionRequiredPoints: number[],
-  heroes: number[],
+  heroSpecialties: number[],
 ): number[] {
   return makeBestTeams(
     missionDifficulty,
     missionSpecialties,
     missionRemainedSlots,
     missionRequiredPoints,
-    heroes,
+    heroSpecialties,
     0,
     Array<number>(missionDifficulty.length).fill(0),
     Array<number>(missionDifficulty.length).fill(0),
@@ -259,14 +293,14 @@ function makeBestTeams(
   missionSpecialties: number[],
   missionRemainedSlots: number[],
   missionRequiredPoints: number[],
-  heroes: number[],
+  heroSpecialties: number[],
   joinedCharacterIndex: number,
   missionGainedPoints: number[],
   lastJoinedCharacters: number[],
 ): Team {
   if (
     !hasRemainedSlots(missionRemainedSlots) ||
-    joinedCharacterIndex == heroes.length
+    joinedCharacterIndex == heroSpecialties.length
   ) {
     return {
       joinedCharacters: [...lastJoinedCharacters],
@@ -285,7 +319,7 @@ function makeBestTeams(
     missionSpecialties,
     missionRemainedSlots,
     missionRequiredPoints,
-    heroes,
+    heroSpecialties,
     joinedCharacterIndex + 1,
     missionGainedPoints,
     lastJoinedCharacters,
@@ -300,7 +334,7 @@ function makeBestTeams(
       continue
     }
 
-    const fitSpecialties = missionSpecialties[i] & heroes[joinedCharacterIndex]
+    const fitSpecialties = missionSpecialties[i] & heroSpecialties[joinedCharacterIndex]
 
     missionSpecialties[i] -= fitSpecialties
     missionRemainedSlots[i]--
@@ -321,7 +355,7 @@ function makeBestTeams(
       missionSpecialties,
       missionRemainedSlots,
       missionRequiredPoints,
-      heroes,
+      heroSpecialties,
       joinedCharacterIndex + 1,
       gainedPoints,
       lastJoinedCharacters,

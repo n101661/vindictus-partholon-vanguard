@@ -37,6 +37,7 @@
           v-model="missions[i - 1].specialties"
           multiple
           :multiple-limit="3"
+          filterable
         >
           <el-option
             v-for="specialty in specialtiesOptions"
@@ -64,6 +65,7 @@
           type="number"
           :min="1"
           :max="3"
+          onclick="this.select()"
         />
       </el-form-item>
       <el-form-item
@@ -82,6 +84,7 @@
           v-model.number="missions[i - 1].grandDiscoveryPoints"
           type="number"
           :min="1"
+          onclick="this.select()"
         />
       </el-form-item>
       <el-form-item

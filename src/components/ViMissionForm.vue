@@ -4,96 +4,100 @@
     :model="missions"
     label-width="auto"
   >
-    <div
-      v-for="i in count"
-      :key="'mission-' + i"
-    >
-      <el-form-item
-        label="Difficulty"
-        :prop="i - 1 + '.difficulty'"
+    <el-tabs v-model="selectedTabName">
+      <el-tab-pane
+        v-for="i in count"
+        :key="'mission' + i"
+        :label="'Mission ' + i"
+        :name="'mission' + i"
       >
-        <el-select v-model="missions[i - 1].difficulty">
-          <el-option
-            v-for="opt of difficultyOptions"
-            :key="opt.label"
-            :label="opt.label"
-            :value="opt.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item
-        label="Specialties"
-        :prop="i - 1 + '.specialties'"
-        :rules="[
-          {
-            type: 'array',
-            len: 3,
-            message: 'Please choose 3 specialties',
-            trigger: 'change',
-          },
-        ]"
-      >
-        <el-select
-          v-model="missions[i - 1].specialties"
-          multiple
-          :multiple-limit="3"
-          filterable
+        <el-form-item
+          label="Difficulty"
+          :prop="i - 1 + '.difficulty'"
         >
-          <el-option
-            v-for="specialty in specialtiesOptions"
-            :key="specialty"
-            :label="specialty"
-            :value="specialty"
+          <el-select v-model="missions[i - 1].difficulty">
+            <el-option
+              v-for="opt of difficultyOptions"
+              :key="opt.label"
+              :label="opt.label"
+              :value="opt.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="Specialties"
+          :prop="i - 1 + '.specialties'"
+          :rules="[
+            {
+              type: 'array',
+              len: 3,
+              message: 'Please choose 3 specialties',
+              trigger: 'change',
+            },
+          ]"
+        >
+          <el-select
+            v-model="missions[i - 1].specialties"
+            multiple
+            :multiple-limit="3"
+            filterable
+          >
+            <el-option
+              v-for="specialty in specialtiesOptions"
+              :key="specialty"
+              :label="specialty"
+              :value="specialty"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="Hero Slots"
+          :prop="i - 1 + '.heroSlots'"
+          :rules="[
+            {
+              type: 'number',
+              min: 1,
+              max: 3,
+              message: 'Valid value is 1 to 3',
+              trigger: 'change',
+            },
+          ]"
+        >
+          <el-input
+            v-model.number="missions[i - 1].heroSlots"
+            type="number"
+            :min="1"
+            :max="3"
+            onclick="this.select()"
           />
-        </el-select>
-      </el-form-item>
-      <el-form-item
-        label="Hero Slots"
-        :prop="i - 1 + '.heroSlots'"
-        :rules="[
-          {
-            type: 'number',
-            min: 1,
-            max: 3,
-            message: 'Valid value is 1 to 3',
-            trigger: 'change',
-          },
-        ]"
-      >
-        <el-input
-          v-model.number="missions[i - 1].heroSlots"
-          type="number"
-          :min="1"
-          :max="3"
-          onclick="this.select()"
-        />
-      </el-form-item>
-      <el-form-item
-        label="Grand Discovery Points"
-        :prop="i - 1 + '.grandDiscoveryPoints'"
-        :rules="[
-          {
-            type: 'number',
-            min: 1,
-            message: 'Please input a number greater than 0',
-            trigger: 'change',
-          },
-        ]"
-      >
-        <el-input
-          v-model.number="missions[i - 1].grandDiscoveryPoints"
-          type="number"
-          :min="1"
-          onclick="this.select()"
-        />
-      </el-form-item>
-      <el-form-item
-        label="Teammates"
-        :prop="i - 1 + '.teammates'"
-      >
-        {{ missions[i - 1].teammates }}
-      </el-form-item>
-    </div>
+        </el-form-item>
+        <el-form-item
+          label="Grand Discovery Points"
+          :prop="i - 1 + '.grandDiscoveryPoints'"
+          :rules="[
+            {
+              type: 'number',
+              min: 1,
+              message: 'Please input a number greater than 0',
+              trigger: 'change',
+            },
+          ]"
+        >
+          <el-input
+            v-model.number="missions[i - 1].grandDiscoveryPoints"
+            type="number"
+            :min="1"
+            onclick="this.select()"
+          />
+        </el-form-item>
+        <el-form-item
+          label="Teammates"
+          :prop="i - 1 + '.teammates'"
+        >
+          {{ missions[i - 1].teammates }}
+        </el-form-item>
+      </el-tab-pane>
+    </el-tabs>
   </el-form>
   <el-button
     type="primary"
@@ -108,6 +112,8 @@ import { ref, reactive, onBeforeMount, onBeforeUpdate } from "vue"
 import {
   FormInstance,
   ElForm,
+  ElTabs,
+  ElTabPane,
   ElFormItem,
   ElSelect,
   ElOption,
@@ -143,6 +149,7 @@ const props = defineProps({
   },
 })
 const formRef = ref<FormInstance>()
+const selectedTabName = ref("mission1")
 const missions = reactive<MissionWithTeammates[]>([])
 
 onBeforeMount(() => {
@@ -166,6 +173,7 @@ onBeforeMount(() => {
 onBeforeUpdate(() => {
   if (missions.length > props.count) {
     missions.splice(props.count, missions.length - props.count)
+    selectedTabName.value = "mission" + missions.length
   } else {
     const insufficiency = props.count - missions.length
     for (let i = 0; i < insufficiency; i++) {

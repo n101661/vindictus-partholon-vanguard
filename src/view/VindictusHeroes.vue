@@ -13,6 +13,16 @@
           <el-icon><Plus /></el-icon>
         </el-button>
       </template>
+      <template #default="{ row, $index }">
+        <el-button
+          v-if="$index > officialHeroIndex"
+          type="danger"
+          plain
+          @click="removeHero(row, $index)"
+        >
+          <el-icon><Minus /></el-icon>
+        </el-button>
+      </template>
     </el-table-column>
     <el-table-column
       label="Icon"
@@ -68,18 +78,18 @@ import {
   ElIcon,
   ElTag,
   ElMessage,
+  ElMessageBox,
 } from "element-plus"
-import { Plus, Avatar } from "@element-plus/icons-vue"
+import { Plus, Minus, Avatar } from "@element-plus/icons-vue"
 import { Hero, vindictusHeroes, getName } from "../components/hero/heroes.ts"
 import HeroDialog from "../components/hero/HeroDialog.vue"
 
-const heroes = Array.from(
-  vindictusHeroes.entries(),
-  (v: [string, string[]]): Hero => {
+const heroes = ref(
+  Array.from(vindictusHeroes.entries(), (v: [string, string[]]): Hero => {
     return new Hero(v[0], [...v[1]])
-  },
+  }),
 )
-const officialHeroIndex = heroes.length - 1
+const officialHeroIndex = heroes.value.length - 1
 
 const dialogVisible = ref(false)
 
@@ -89,7 +99,7 @@ onBeforeMount(() => {
     window.localStorage.getItem("extra-heroes") ?? "[]",
   )
   for (const hero of extraHeroes) {
-    heroes.push(hero)
+    heroes.value.push(hero)
   }
 })
 
@@ -106,12 +116,42 @@ function addHero(v: Hero) {
   extraHeroes.push(hero)
   window.localStorage.setItem("extra-heroes", JSON.stringify(extraHeroes))
 
-  heroes.push(hero)
+  heroes.value.push(hero)
 
   ElMessage({
     message: `Created ${v.name} successful`,
     type: "success",
   })
+}
+
+async function removeHero(hero: Hero, index: number) {
+  const confirm = await ElMessageBox.confirm(
+    `Do you want to remove '${hero.name}'?`,
+    "Warning",
+    {
+      confirmButtonText: "OK",
+      type: "warning",
+    },
+  )
+    .then((): boolean => true)
+    .catch((): boolean => false)
+
+  if (confirm) {
+    heroes.value.splice(index, 1)
+
+    if (window.localStorage) {
+      const extraHeroes: Hero[] = JSON.parse(
+        window.localStorage.getItem("extra-heroes") ?? "[]",
+      )
+      extraHeroes.splice(index - officialHeroIndex - 1, 1)
+      window.localStorage.setItem("extra-heroes", JSON.stringify(extraHeroes))
+    }
+
+    ElMessage({
+      message: "Remove completed",
+      type: "success",
+    })
+  }
 }
 
 function heroImageURL(i: number): string {

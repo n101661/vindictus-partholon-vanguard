@@ -24,9 +24,13 @@ export const vindictusHeroes = new Map<string, string[]>([
   ["Achel", ["鐵胃", "野生動物知識", "連續打擊", "先發制人", "赤犬"]],
 ])
 
-export interface Hero {
+export class Hero {
   name: string
   specialties: string[]
+  constructor(name: string, specialties: string[]) {
+    this.name = name
+    this.specialties = specialties
+  }
 }
 
 const names = new Map<string, string>([

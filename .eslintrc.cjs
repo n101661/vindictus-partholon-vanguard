@@ -17,6 +17,7 @@ module.exports = {
   },
   plugins: ["@typescript-eslint"],
   rules: {
+    "vue/singleline-html-element-content-newline": 0,
     "no-trailing-spaces": 1,
     "no-extra-parens": 1,
     quotes: ["warn", "double", { allowTemplateLiterals: true }],

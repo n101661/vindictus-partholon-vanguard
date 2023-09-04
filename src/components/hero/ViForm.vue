@@ -1,5 +1,4 @@
 <template>
-  <h2>Heroes</h2>
   <el-form
     ref="formRef"
     :model="heroForm"

@@ -1,56 +1,39 @@
 <template>
-  <vi-form-heroes />
-  <el-divider />
-  <h2>The Heroes You Have</h2>
-  <vi-select-heroes
-    v-model="heroes"
-    @save="saveHeroes"
-  />
-  <el-divider />
-  <h2>Calculate Best Teams</h2>
-  <el-form-item label="Mission Amount">
-    <el-select v-model="missionCount">
-      <el-option
-        v-for="i in 5"
-        :key="i"
-        :label="i"
-        :value="i"
-      />
-    </el-select>
-  </el-form-item>
-  <vi-mission-form
-    :count="missionCount"
-    :heroes="heroes"
-  />
+  <el-container>
+    <el-aside>
+      <el-menu
+        router
+        default-active="calculate-best-teams"
+      >
+        <el-menu-item index="calculate-best-teams">
+          <el-icon><Search /></el-icon>
+          <template #title>Calculate Best Teams</template>
+        </el-menu-item>
+        <el-menu-item index="owned-heroes">
+          <el-icon><UserFilled /></el-icon>
+          <template #title>Owned Heroes</template>
+        </el-menu-item>
+        <el-menu-item index="heroes">
+          <el-icon><Document /></el-icon>
+          <template #title>Heroes</template>
+        </el-menu-item>
+      </el-menu>
+    </el-aside>
+    <el-main>
+      <router-view />
+    </el-main>
+  </el-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
-import { ElDivider, ElFormItem, ElSelect, ElOption } from "element-plus"
-import ViFormHeroes from "./components/hero/ViForm.vue"
-import ViSelectHeroes from "./components/hero/ViSelect.vue"
-import ViMissionForm from "./components/ViMissionForm.vue"
-
-const heroes = ref<string[]>(getHeroes())
-const missionCount = ref(1)
-
-function saveHeroes(value: string | string[] | undefined) {
-  if (!window.localStorage) {
-    return
-  }
-  window.localStorage.setItem("heroes", JSON.stringify(value))
-}
-
-function getHeroes(): string[] {
-  if (!window.localStorage) {
-    return []
-  }
-  const data = window.localStorage.getItem("heroes")
-  if (data == null) {
-    return []
-  }
-  return JSON.parse(data)
-}
+import {
+  ElContainer,
+  ElAside,
+  ElMain,
+  ElMenu,
+  ElMenuItem,
+  ElIcon,
+} from "element-plus"
+import { Search, UserFilled, Document } from "@element-plus/icons-vue"
+import { RouterView } from "vue-router"
 </script>
-
-<style scoped></style>

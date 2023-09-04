@@ -21,6 +21,7 @@ export const vindictusHeroes = new Map<string, string[]>([
   ["Letty", ["航海術", "卓越平衡", "遠程射擊", "巨型武器", "爆炸愛好者"]],
   ["Latiya", ["止水月步", "野生動物知識", "謹慎戰術", "巨型武器", "高潔的獵人"]],
   ["Czern", ["占星術", "深沉之心", "謹慎戰術", "遠程射擊", "黎明魔女"]],
+  ["Achel", ["鐵胃", "野生動物知識", "連續打擊", "先發制人", "赤犬"]],
 ])
 
 export interface Hero {
@@ -51,6 +52,7 @@ const names = new Map<string, string>([
   ["Letty", "蕾媞"],
   ["Latiya", "拉緹雅"],
   ["Czern", "泫兒"],
+  ["Achel", "阿刻洛"],
 ])
 
 export function getName(id: string): string {

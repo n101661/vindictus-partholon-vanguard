@@ -1,10 +1,20 @@
 <template>
   <el-container>
-    <el-aside>
+    <el-aside width="auto">
       <el-menu
         router
         default-active="calculate-best-teams"
+        :collapse="menuCollapse"
       >
+        <el-button
+          style="width: 30px; height: 30px"
+          @click="menuCollapse = !menuCollapse"
+        >
+          <el-icon size="25px">
+            <Fold v-if="menuCollapse" />
+            <Expand v-else />
+          </el-icon>
+        </el-button>
         <el-menu-item index="calculate-best-teams">
           <el-icon><Search /></el-icon>
           <template #title>Calculate Best Teams</template>
@@ -26,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue"
 import {
   ElContainer,
   ElAside,
@@ -33,7 +44,16 @@ import {
   ElMenu,
   ElMenuItem,
   ElIcon,
+  ElButton,
 } from "element-plus"
-import { Search, UserFilled, Document } from "@element-plus/icons-vue"
+import {
+  Fold,
+  Expand,
+  Search,
+  UserFilled,
+  Document,
+} from "@element-plus/icons-vue"
 import { RouterView } from "vue-router"
+
+const menuCollapse = ref(false)
 </script>

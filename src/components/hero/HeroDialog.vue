@@ -79,6 +79,8 @@ import {
 } from "element-plus"
 import { vindictusHeroes, Hero } from "./heroes.ts"
 
+let customHeroStartID = 1000
+
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -96,6 +98,7 @@ const emit = defineEmits<{
 
 const formRef = ref<FormInstance>()
 const heroForm = reactive<Hero>({
+  id: 0,
   name: "",
   specialties: [],
 })
@@ -111,8 +114,8 @@ const visible = computed({
 const heroSpecialties = new Set<string>()
 
 onBeforeMount(() => {
-  vindictusHeroes.forEach((values: string[]) => {
-    values.forEach((v: string) => {
+  vindictusHeroes.forEach((hero: Hero) => {
+    hero.specialties.forEach((v: string) => {
       if (v !== "") heroSpecialties.add(v)
     })
   })
@@ -123,6 +126,7 @@ function submitHandler(form: FormInstance | undefined) {
   form.validate((valid: boolean) => {
     if (!valid) return
 
+    heroForm.id = customHeroStartID++
     emit("submit", heroForm)
 
     visible.value = false

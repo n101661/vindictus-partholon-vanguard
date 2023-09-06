@@ -84,12 +84,8 @@ import { Plus, Minus, Avatar } from "@element-plus/icons-vue"
 import { Hero, vindictusHeroes, getName } from "../components/hero/heroes.ts"
 import HeroDialog from "../components/hero/HeroDialog.vue"
 
-const heroes = ref(
-  Array.from(vindictusHeroes.entries(), (v: [string, string[]]): Hero => {
-    return new Hero(v[0], [...v[1]])
-  }),
-)
-const officialHeroIndex = heroes.value.length - 1
+const heroes = ref<Hero[]>(vindictusHeroes)
+const officialHeroIndex = vindictusHeroes.length - 1
 
 const dialogVisible = ref(false)
 
@@ -110,6 +106,7 @@ function addHero(v: Hero) {
     window.localStorage.getItem("extra-heroes") ?? "[]",
   )
   const hero: Hero = {
+    id: v.id,
     name: v.name,
     specialties: [...v.specialties],
   }

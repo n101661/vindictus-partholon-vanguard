@@ -42,9 +42,9 @@ const value = computed({
 })
 
 onBeforeMount(() => {
-  for (const hero of vindictusHeroes.keys()) {
-    heroes.push(hero)
-  }
+  vindictusHeroes.forEach((hero: Hero) => {
+    heroes.push(hero.name)
+  })
   if (!window.localStorage) return
   const extraHeroes: Hero[] = JSON.parse(
     window.localStorage.getItem("extra-heroes") ?? "[]",

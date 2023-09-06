@@ -120,7 +120,7 @@ import {
   ElInput,
   ElButton,
 } from "element-plus"
-import { vindictusHeroes, getName as getHeroName } from "./hero/heroes.ts"
+import { Hero, vindictusHeroes, getName as getHeroName } from "./hero/heroes.ts"
 
 const difficultyOptions: DifficultyOption[] = [
   {
@@ -136,6 +136,11 @@ const difficultyOptions: DifficultyOption[] = [
     value: -2,
   },
 ]
+const heroToSpecialties = new Map<string, string[]>(
+  vindictusHeroes.map((hero: Hero): [string, string[]] => {
+    return [hero.name, hero.specialties]
+  }),
+)
 const specialtiesOptions = new Set<string>()
 
 const props = defineProps({
@@ -153,8 +158,8 @@ const selectedTabName = ref("mission1")
 const missions = reactive<MissionWithTeammates[]>([])
 
 onBeforeMount(() => {
-  vindictusHeroes.forEach((values: string[]) => {
-    values.forEach((v: string) => {
+  vindictusHeroes.forEach((hero: Hero) => {
+    hero.specialties.forEach((v: string) => {
       if (v != "") specialtiesOptions.add(v)
     })
   })
@@ -204,7 +209,7 @@ function calculateBestTeam(form: FormInstance | undefined) {
         }
       }),
       props.heroes.map((hero): string[] => {
-        return vindictusHeroes.get(hero) ?? []
+        return heroToSpecialties.get(hero) ?? []
       }),
     )
 

@@ -81,7 +81,7 @@ export class HeroStorage {
   public static set ownedHeroes(heroes: Map<number, number>) {
     if (!HeroStorage.valid) return
     window.localStorage.setItem(
-      _customHeroesKey,
+      _ownedHeroesKey,
       JSON.stringify(Array.from(heroes.entries())),
     )
   }

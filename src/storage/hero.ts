@@ -1,6 +1,7 @@
 import { Hero } from "../components/hero/heroes"
 
 const _customHeroesKey = "custom-heroes"
+const _customHeroIdKey = "custom-hero.id"
 const _ownedHeroesKey = "owned-heroes"
 
 export class HeroStorage {
@@ -43,6 +44,19 @@ export class HeroStorage {
     heroes.delete(id)
     HeroStorage.customized = heroes
     return hero
+  }
+
+  public static get customizedHeroId(): number | undefined {
+    if (!HeroStorage.valid) return undefined
+
+    const data = window.localStorage.getItem(_customHeroIdKey)
+    if (data == null) return undefined
+    return Number(data)
+  }
+
+  public static set customizedHeroId(id: number) {
+    if (!HeroStorage.valid) return
+    window.localStorage.setItem(_customHeroIdKey, id.toString())
   }
 
   public static get owned(): { heroID: number; amount: number }[] {

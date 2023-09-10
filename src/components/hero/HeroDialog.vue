@@ -79,8 +79,6 @@ import {
 } from "element-plus"
 import { vindictusHeroes, Hero } from "./heroes.ts"
 
-let customHeroStartID = 1000
-
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -90,10 +88,15 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  initCustomizedHeroId: {
+    type: Number,
+    default: 1000,
+  },
 })
 const emit = defineEmits<{
   (event: "update:modelValue", value: boolean): void
   (event: "submit", value: Hero): void
+  (event: "update:customizedHeroId", value: number): void
 }>()
 
 const formRef = ref<FormInstance>()
@@ -112,6 +115,7 @@ const visible = computed({
 })
 
 const heroSpecialties = new Set<string>()
+let customHeroStartId = props.initCustomizedHeroId
 
 onBeforeMount(() => {
   vindictusHeroes.forEach((hero: Hero) => {
@@ -126,8 +130,9 @@ function submitHandler(form: FormInstance | undefined) {
   form.validate((valid: boolean) => {
     if (!valid) return
 
-    heroForm.id = customHeroStartID++
+    heroForm.id = customHeroStartId++
     emit("submit", heroForm)
+    emit("update:customizedHeroId", customHeroStartId)
 
     visible.value = false
     form.resetFields()

@@ -3,7 +3,9 @@
   <hero-dialog
     v-model="dialogVisible"
     title="Create Hero"
+    :init-customized-hero-id="customizedHeroId"
     @submit="addHero"
+    @update:customized-hero-id="saveCustomizedHeroId"
   />
 
   <el-table :data="heroes">
@@ -92,6 +94,7 @@ const heroes = ref<Hero[]>(
 )
 const officialHeroIndex = vindictusHeroes.size - 1
 
+const customizedHeroId = ref(HeroStorage.customizedHeroId)
 const dialogVisible = ref(false)
 
 onBeforeMount(() => {
@@ -139,6 +142,10 @@ async function removeHero(hero: Hero, index: number) {
       type: "success",
     })
   }
+}
+
+function saveCustomizedHeroId(id: number) {
+  HeroStorage.customizedHeroId = id
 }
 
 function heroImageURL(i: number): string {

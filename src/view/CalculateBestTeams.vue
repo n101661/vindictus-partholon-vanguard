@@ -27,9 +27,9 @@ const missionCount = ref(1)
 
 function getHeroes(): number[] {
   const heroes: number[] = []
-  HeroStorage.ownedHeroes.forEach((hero) => {
-    for (let i = 0; i < hero.amount; i++) {
-      heroes.push(hero.heroID)
+  HeroStorage.ownedHeroes.forEach((amount, heroId) => {
+    for (let i = 0; i < amount; i++) {
+      heroes.push(heroId)
     }
   })
   return heroes

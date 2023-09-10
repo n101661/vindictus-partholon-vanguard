@@ -19,10 +19,6 @@
           <el-icon><Search /></el-icon>
           <template #title>Calculate Best Teams</template>
         </el-menu-item>
-        <el-menu-item index="owned-heroes">
-          <el-icon><UserFilled /></el-icon>
-          <template #title>Owned Heroes</template>
-        </el-menu-item>
         <el-menu-item index="heroes">
           <el-icon><Document /></el-icon>
           <template #title>Heroes</template>
@@ -50,7 +46,6 @@ import {
   Fold,
   Expand,
   Search,
-  UserFilled,
   Document,
 } from "@element-plus/icons-vue"
 import { RouterView } from "vue-router"

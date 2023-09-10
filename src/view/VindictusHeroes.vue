@@ -17,7 +17,7 @@
       </template>
       <template #default="{ row, $index }">
         <el-button
-          v-if="$index > officialHeroIndex"
+          v-if="(row as HeroTableRow).hero.id > officialHeroMaxId"
           type="danger"
           plain
           @click="removeHero(row, $index)"
@@ -30,11 +30,11 @@
       label="Icon"
       width="80px"
     >
-      <template #default="{ $index }">
+      <template #default="{ row }">
         <el-image
-          v-if="$index <= officialHeroIndex"
+          v-if="(row as HeroTableRow).hero.id <= officialHeroMaxId"
           style="width: 40px; height: 40px"
-          :src="heroImageURL($index + 1)"
+          :src="heroImageURL((row as HeroTableRow).hero.id)"
         />
         <el-icon
           v-else
@@ -45,26 +45,48 @@
       </template>
     </el-table-column>
     <el-table-column
-      prop="name"
+      prop="hero.name"
       label="Name"
       width="100px"
     >
       <template #default="{ row }">
-        {{ (row as Hero).name }}
+        {{ (row as HeroTableRow).hero.name }}
       </template>
     </el-table-column>
     <el-table-column
-      prop="specialties"
+      prop="hero.specialties"
       label="Specialties"
     >
       <template #default="{ row }">
         <el-tag
-          v-for="(sp, i) in (row as Hero).specialties"
+          v-for="(sp, i) in (row as HeroTableRow).hero.specialties"
           v-show="sp"
           :key="i"
         >
           {{ sp }}
         </el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="amount"
+      label="Amount"
+    >
+      <template #default="{ row }">
+        <el-input
+          v-model.number="(row as HeroTableRow).amount"
+          type="number"
+          min="0"
+          @input="
+            (value) => {
+              const r: HeroTableRow = row
+
+              const v = Number(value)
+              HeroStorage.setOwnedHero(r.hero.id, v)
+
+              r.amount = v
+            }
+          "
+        />
       </template>
     </el-table-column>
   </el-table>
@@ -74,6 +96,7 @@
 import { ref, onBeforeMount } from "vue"
 import {
   ElButton,
+  ElInput,
   ElTable,
   ElTableColumn,
   ElImage,
@@ -87,19 +110,31 @@ import { Hero, vindictusHeroes } from "../components/hero/heroes.ts"
 import HeroDialog from "../components/hero/HeroDialog.vue"
 import { HeroStorage } from "../storage/hero.ts"
 
-const heroes = ref<Hero[]>(
-  Array.from(vindictusHeroes.entries(), (v): Hero => {
-    return v[1].clone()
-  }),
+const heroes = ref<HeroTableRow[]>(
+  Array.from(vindictusHeroes.entries(), (v): HeroTableRow => {
+    return {
+      hero: v[1].clone(),
+      amount: 0,
+    }
+  }).concat(
+    ...Array.from(HeroStorage.customizedHeroes.values(), (v): HeroTableRow => {
+      return {
+        hero: v.clone(),
+        amount: 0,
+      }
+    }),
+  ),
 )
-const officialHeroIndex = vindictusHeroes.size - 1
+const officialHeroMaxId = vindictusHeroes.size
 
 const customizedHeroId = ref(HeroStorage.customizedHeroId)
 const dialogVisible = ref(false)
 
 onBeforeMount(() => {
-  for (const hero of HeroStorage.customizedHeroes.values()) {
-    heroes.value.push(hero)
+  const ownedHeroes = HeroStorage.ownedHeroes
+  for (let hero of heroes.value) {
+    const id = hero.hero.id
+    hero.amount = ownedHeroes.get(id) ?? 0
   }
 })
 
@@ -107,7 +142,10 @@ function addHero(v: Hero) {
   const hero = v.clone()
 
   HeroStorage.addCustomizedHero(hero)
-  heroes.value.push(hero)
+  heroes.value.push({
+    hero: hero,
+    amount: 0,
+  })
 
   ElMessage({
     message: `Created ${v.name} successful`,
@@ -115,9 +153,9 @@ function addHero(v: Hero) {
   })
 }
 
-async function removeHero(hero: Hero, index: number) {
+async function removeHero(hero: HeroTableRow, index: number) {
   const confirm = await ElMessageBox.confirm(
-    `Do you want to remove '${hero.name}'?`,
+    `Do you want to remove '${hero.hero.name}'?`,
     "Warning",
     {
       confirmButtonText: "OK",
@@ -130,7 +168,8 @@ async function removeHero(hero: Hero, index: number) {
   if (confirm) {
     const removedHeroes = heroes.value.splice(index, 1)
     if (removedHeroes.length == 1) {
-      HeroStorage.removeCustomizedHero(removedHeroes[0].id)
+      HeroStorage.removeCustomizedHero(removedHeroes[0].hero.id)
+      HeroStorage.setOwnedHero(removedHeroes[0].hero.id, 0)
     }
 
     ElMessage({
@@ -148,5 +187,12 @@ function heroImageURL(i: number): string {
   return (
     "https://twskyimg.akamaized.net/gameweb/mh/home/img/heros/" + i + "@2x.png"
   )
+}
+</script>
+
+<script lang="ts">
+interface HeroTableRow {
+  hero: Hero
+  amount: number
 }
 </script>

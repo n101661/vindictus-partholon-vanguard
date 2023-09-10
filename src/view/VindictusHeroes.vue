@@ -89,7 +89,7 @@ import { HeroStorage } from "../storage/hero.ts"
 
 const heroes = ref<Hero[]>(
   Array.from(vindictusHeroes.entries(), (v): Hero => {
-    return new Hero(v[1].id, v[1].name, [...v[1].specialties])
+    return v[1].clone()
   }),
 )
 const officialHeroIndex = vindictusHeroes.size - 1
@@ -104,11 +104,7 @@ onBeforeMount(() => {
 })
 
 function addHero(v: Hero) {
-  const hero: Hero = {
-    id: v.id,
-    name: v.name,
-    specialties: [...v.specialties],
-  }
+  const hero = v.clone()
 
   HeroStorage.addCustomizedHero(hero)
   heroes.value.push(hero)

@@ -100,11 +100,7 @@ const emit = defineEmits<{
 }>()
 
 const formRef = ref<FormInstance>()
-const heroForm = reactive<Hero>({
-  id: 0,
-  name: "",
-  specialties: [],
-})
+const heroForm = reactive<Hero>(new Hero())
 const visible = computed({
   get(): boolean {
     return props.modelValue

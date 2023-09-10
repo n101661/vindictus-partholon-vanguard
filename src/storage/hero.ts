@@ -4,6 +4,12 @@ const _customHeroesKey = "custom-heroes"
 const _customHeroIdKey = "custom-hero.id"
 const _ownedHeroesKey = "owned-heroes"
 
+interface _Hero {
+  id: number
+  name: string
+  specialties: string[]
+}
+
 export class HeroStorage {
   public static get valid(): boolean {
     return window.localStorage != undefined
@@ -14,7 +20,12 @@ export class HeroStorage {
 
     const data = window.localStorage.getItem(_customHeroesKey)
     if (data == null) return new Map()
-    return new Map(JSON.parse(data))
+
+    const result = new Map<number, Hero>()
+    new Map<number, _Hero>(JSON.parse(data)).forEach((val, key) => {
+      result.set(key, new Hero(val.id, val.name, val.specialties))
+    })
+    return result
   }
 
   public static set customizedHeroes(heroes: Map<number, Hero>) {

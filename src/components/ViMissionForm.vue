@@ -223,7 +223,7 @@ function calculateBestTeam(form: FormInstance | undefined) {
 
         const hero = vindictusHeroes.get(id)
         if (hero != undefined) return hero.name
-        return HeroStorage.customized.get(id)?.name ?? ""
+        return HeroStorage.customizedHeroes.get(id)?.name ?? ""
       })
     })
   })

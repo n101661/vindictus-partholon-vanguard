@@ -98,7 +98,7 @@ const customizedHeroId = ref(HeroStorage.customizedHeroId)
 const dialogVisible = ref(false)
 
 onBeforeMount(() => {
-  for (const hero of HeroStorage.customized.values()) {
+  for (const hero of HeroStorage.customizedHeroes.values()) {
     heroes.value.push(hero)
   }
 })
@@ -110,7 +110,7 @@ function addHero(v: Hero) {
     specialties: [...v.specialties],
   }
 
-  HeroStorage.addCustomized(hero)
+  HeroStorage.addCustomizedHero(hero)
   heroes.value.push(hero)
 
   ElMessage({
@@ -134,7 +134,7 @@ async function removeHero(hero: Hero, index: number) {
   if (confirm) {
     const removedHeroes = heroes.value.splice(index, 1)
     if (removedHeroes.length == 1) {
-      HeroStorage.removeCustomized(removedHeroes[0].id)
+      HeroStorage.removeCustomizedHero(removedHeroes[0].id)
     }
 
     ElMessage({

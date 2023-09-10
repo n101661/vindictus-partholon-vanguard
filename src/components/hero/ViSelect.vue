@@ -46,7 +46,7 @@ onBeforeMount(() => {
   vindictusHeroes.forEach((hero: Hero) => {
     heroes.push(hero.name)
   })
-  for (const hero of HeroStorage.customized.values()) {
+  for (const hero of HeroStorage.customizedHeroes.values()) {
     heroes.push(hero.name)
   }
 })

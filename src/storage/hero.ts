@@ -9,7 +9,7 @@ export class HeroStorage {
     return window.localStorage != undefined
   }
 
-  public static get customized(): Map<number, Hero> {
+  public static get customizedHeroes(): Map<number, Hero> {
     if (!HeroStorage.valid) return new Map()
 
     const data = window.localStorage.getItem(_customHeroesKey)
@@ -17,7 +17,7 @@ export class HeroStorage {
     return new Map(JSON.parse(data))
   }
 
-  public static set customized(heroes: Map<number, Hero>) {
+  public static set customizedHeroes(heroes: Map<number, Hero>) {
     if (!HeroStorage.valid) return
     window.localStorage.setItem(
       _customHeroesKey,
@@ -25,24 +25,24 @@ export class HeroStorage {
     )
   }
 
-  public static addCustomized(hero: Hero): boolean {
+  public static addCustomizedHero(hero: Hero): boolean {
     if (!HeroStorage.valid) return false
 
-    const heroes = HeroStorage.customized
+    const heroes = HeroStorage.customizedHeroes
     if (heroes.get(hero.id) != undefined) return false
 
     heroes.set(hero.id, hero)
-    HeroStorage.customized = heroes
+    HeroStorage.customizedHeroes = heroes
     return true
   }
 
-  public static removeCustomized(id: number): Hero | undefined {
+  public static removeCustomizedHero(id: number): Hero | undefined {
     if (!HeroStorage.valid) return undefined
 
-    const heroes = HeroStorage.customized
+    const heroes = HeroStorage.customizedHeroes
     const hero = heroes.get(id)
     heroes.delete(id)
-    HeroStorage.customized = heroes
+    HeroStorage.customizedHeroes = heroes
     return hero
   }
 
@@ -59,7 +59,7 @@ export class HeroStorage {
     window.localStorage.setItem(_customHeroIdKey, id.toString())
   }
 
-  public static get owned(): { heroID: number; amount: number }[] {
+  public static get ownedHeroes(): { heroID: number; amount: number }[] {
     if (!HeroStorage.valid) return []
 
     const data = window.localStorage.getItem(_ownedHeroesKey)
@@ -67,7 +67,7 @@ export class HeroStorage {
     return JSON.parse(data)
   }
 
-  public static set owned(heroes: { heroID: number; amount: number }[]) {
+  public static set ownedHeroes(heroes: { heroID: number; amount: number }[]) {
     if (!HeroStorage.valid) return
     window.localStorage.setItem(_customHeroesKey, JSON.stringify(heroes))
   }

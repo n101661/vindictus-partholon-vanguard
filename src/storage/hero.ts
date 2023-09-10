@@ -59,17 +59,30 @@ export class HeroStorage {
     window.localStorage.setItem(_customHeroIdKey, id.toString())
   }
 
-  public static get ownedHeroes(): { heroID: number; amount: number }[] {
-    if (!HeroStorage.valid) return []
+  public static get ownedHeroes(): Map<number, number> {
+    if (!HeroStorage.valid) return new Map()
 
     const data = window.localStorage.getItem(_ownedHeroesKey)
-    if (data == null) return []
-    return JSON.parse(data)
+    if (data == null) return new Map()
+    return new Map(JSON.parse(data))
   }
 
-  public static set ownedHeroes(heroes: { heroID: number; amount: number }[]) {
+  public static set ownedHeroes(heroes: Map<number, number>) {
     if (!HeroStorage.valid) return
-    window.localStorage.setItem(_customHeroesKey, JSON.stringify(heroes))
+    window.localStorage.setItem(
+      _customHeroesKey,
+      JSON.stringify(Array.from(heroes.entries())),
+    )
+  }
+
+  public static setOwnedHero(id: number, amount: number) {
+    const heroes = HeroStorage.ownedHeroes
+    if (amount <= 0) {
+      heroes.delete(id)
+    } else {
+      heroes.set(id, amount)
+    }
+    HeroStorage.ownedHeroes = heroes
   }
 
   public static clear() {

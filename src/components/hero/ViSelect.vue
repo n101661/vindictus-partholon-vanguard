@@ -7,7 +7,7 @@
     <el-option
       v-for="item of heroes"
       :key="item"
-      :label="getHeroName(item)"
+      :label="item"
       :value="item"
     />
   </el-select>
@@ -16,7 +16,8 @@
 <script lang="ts" setup>
 import { computed, onBeforeMount } from "vue"
 import { ElSelect, ElOption } from "element-plus"
-import { vindictusHeroes, Hero, getName as getHeroName } from "./heroes.ts"
+import { vindictusHeroes, Hero } from "./heroes.ts"
+import { HeroStorage } from "../../storage/hero.ts"
 
 const heroes: string[] = []
 
@@ -45,11 +46,7 @@ onBeforeMount(() => {
   vindictusHeroes.forEach((hero: Hero) => {
     heroes.push(hero.name)
   })
-  if (!window.localStorage) return
-  const extraHeroes: Hero[] = JSON.parse(
-    window.localStorage.getItem("extra-heroes") ?? "[]",
-  )
-  for (const hero of extraHeroes) {
+  for (const hero of HeroStorage.customized.values()) {
     heroes.push(hero.name)
   }
 })

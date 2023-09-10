@@ -8,17 +8,41 @@ export class HeroStorage {
     return window.localStorage != undefined
   }
 
-  public static get customized(): Hero[] {
-    if (!HeroStorage.valid) return []
+  public static get customized(): Map<number, Hero> {
+    if (!HeroStorage.valid) return new Map()
 
     const data = window.localStorage.getItem(_customHeroesKey)
-    if (data == null) return []
-    return JSON.parse(data)
+    if (data == null) return new Map()
+    return new Map(JSON.parse(data))
   }
 
-  public static set customized(heroes: Hero[]) {
+  public static set customized(heroes: Map<number, Hero>) {
     if (!HeroStorage.valid) return
-    window.localStorage.setItem(_customHeroesKey, JSON.stringify(heroes))
+    window.localStorage.setItem(
+      _customHeroesKey,
+      JSON.stringify(Array.from(heroes.entries())),
+    )
+  }
+
+  public static addCustomized(hero: Hero): boolean {
+    if (!HeroStorage.valid) return false
+
+    const heroes = HeroStorage.customized
+    if (heroes.get(hero.id) != undefined) return false
+
+    heroes.set(hero.id, hero)
+    HeroStorage.customized = heroes
+    return true
+  }
+
+  public static removeCustomized(id: number): Hero | undefined {
+    if (!HeroStorage.valid) return undefined
+
+    const heroes = HeroStorage.customized
+    const hero = heroes.get(id)
+    heroes.delete(id)
+    HeroStorage.customized = heroes
+    return hero
   }
 
   public static get owned(): { heroID: number; amount: number }[] {
@@ -32,5 +56,10 @@ export class HeroStorage {
   public static set owned(heroes: { heroID: number; amount: number }[]) {
     if (!HeroStorage.valid) return
     window.localStorage.setItem(_customHeroesKey, JSON.stringify(heroes))
+  }
+
+  public static clear() {
+    if (!HeroStorage.valid) return
+    window.localStorage.clear()
   }
 }

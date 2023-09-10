@@ -120,7 +120,8 @@ import {
   ElInput,
   ElButton,
 } from "element-plus"
-import { Hero, vindictusHeroes, getName as getHeroName } from "./hero/heroes.ts"
+import { Hero, vindictusHeroes } from "./hero/heroes.ts"
+import { HeroStorage } from "../storage/hero"
 
 const difficultyOptions: DifficultyOption[] = [
   {
@@ -136,10 +137,13 @@ const difficultyOptions: DifficultyOption[] = [
     value: -2,
   },
 ]
-const heroToSpecialties = new Map<string, string[]>(
-  vindictusHeroes.map((hero: Hero): [string, string[]] => {
-    return [hero.name, hero.specialties]
-  }),
+const heroToSpecialties = new Map<number, string[]>(
+  Array.from(
+    vindictusHeroes.entries(),
+    (v: [number, Hero]): [number, string[]] => {
+      return [v[0], [...v[1].specialties]]
+    },
+  ),
 )
 const specialtiesOptions = new Set<string>()
 
@@ -149,8 +153,8 @@ const props = defineProps({
     default: 1,
   },
   heroes: {
-    type: Array<string>,
-    default: [] as string[],
+    type: Array<number>,
+    default: [] as number[],
   },
 })
 const formRef = ref<FormInstance>()
@@ -208,14 +212,18 @@ function calculateBestTeam(form: FormInstance | undefined) {
           grandDiscoveryPoints: mission.grandDiscoveryPoints,
         }
       }),
-      props.heroes.map((hero): string[] => {
-        return heroToSpecialties.get(hero) ?? []
+      props.heroes.map((id): string[] => {
+        return heroToSpecialties.get(id) ?? []
       }),
     )
 
     bestTeams.forEach((heroIndices, i) => {
       missions[i].teammates = heroIndices.map((j): string => {
-        return getHeroName(props.heroes[j])
+        const id = props.heroes[j]
+
+        const hero = vindictusHeroes.get(id)
+        if (hero != undefined) return hero.name
+        return HeroStorage.customized.get(id)?.name ?? ""
       })
     })
   })

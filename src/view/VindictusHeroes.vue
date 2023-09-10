@@ -48,7 +48,7 @@
       width="100px"
     >
       <template #default="{ row }">
-        {{ getName((row as Hero).name) }}
+        {{ (row as Hero).name }}
       </template>
     </el-table-column>
     <el-table-column
@@ -81,38 +81,33 @@ import {
   ElMessageBox,
 } from "element-plus"
 import { Plus, Minus, Avatar } from "@element-plus/icons-vue"
-import { Hero, vindictusHeroes, getName } from "../components/hero/heroes.ts"
+import { Hero, vindictusHeroes } from "../components/hero/heroes.ts"
 import HeroDialog from "../components/hero/HeroDialog.vue"
+import { HeroStorage } from "../storage/hero.ts"
 
-const heroes = ref<Hero[]>(vindictusHeroes)
-const officialHeroIndex = vindictusHeroes.length - 1
+const heroes = ref<Hero[]>(
+  Array.from(vindictusHeroes.entries(), (v): Hero => {
+    return new Hero(v[1].id, v[1].name, [...v[1].specialties])
+  }),
+)
+const officialHeroIndex = vindictusHeroes.size - 1
 
 const dialogVisible = ref(false)
 
 onBeforeMount(() => {
-  if (!window.localStorage) return
-  const extraHeroes: Hero[] = JSON.parse(
-    window.localStorage.getItem("extra-heroes") ?? "[]",
-  )
-  for (const hero of extraHeroes) {
+  for (const hero of HeroStorage.customized.values()) {
     heroes.value.push(hero)
   }
 })
 
 function addHero(v: Hero) {
-  if (!window.localStorage) return
-
-  const extraHeroes: Hero[] = JSON.parse(
-    window.localStorage.getItem("extra-heroes") ?? "[]",
-  )
   const hero: Hero = {
     id: v.id,
     name: v.name,
     specialties: [...v.specialties],
   }
-  extraHeroes.push(hero)
-  window.localStorage.setItem("extra-heroes", JSON.stringify(extraHeroes))
 
+  HeroStorage.addCustomized(hero)
   heroes.value.push(hero)
 
   ElMessage({
@@ -134,14 +129,9 @@ async function removeHero(hero: Hero, index: number) {
     .catch((): boolean => false)
 
   if (confirm) {
-    heroes.value.splice(index, 1)
-
-    if (window.localStorage) {
-      const extraHeroes: Hero[] = JSON.parse(
-        window.localStorage.getItem("extra-heroes") ?? "[]",
-      )
-      extraHeroes.splice(index - officialHeroIndex - 1, 1)
-      window.localStorage.setItem("extra-heroes", JSON.stringify(extraHeroes))
+    const removedHeroes = heroes.value.splice(index, 1)
+    if (removedHeroes.length == 1) {
+      HeroStorage.removeCustomized(removedHeroes[0].id)
     }
 
     ElMessage({

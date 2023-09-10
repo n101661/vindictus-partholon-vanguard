@@ -20,18 +20,18 @@
 import { ref } from "vue"
 import { ElFormItem, ElSelect, ElOption } from "element-plus"
 import ViMissionForm from "../components/ViMissionForm.vue"
+import { HeroStorage } from "../storage/hero"
 
-const heroes = ref<string[]>(getHeroes())
+const heroes = ref<number[]>(getHeroes())
 const missionCount = ref(1)
 
-function getHeroes(): string[] {
-  if (!window.localStorage) {
-    return []
-  }
-  const data = window.localStorage.getItem("heroes")
-  if (data == null) {
-    return []
-  }
-  return JSON.parse(data)
+function getHeroes(): number[] {
+  const heroes: number[] = []
+  HeroStorage.owned.forEach((hero) => {
+    for (let i = 0; i < hero.amount; i++) {
+      heroes.push(hero.heroID)
+    }
+  })
+  return heroes
 }
 </script>

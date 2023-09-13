@@ -81,7 +81,7 @@
               const r: HeroTableRow = row
 
               const v = Number(value)
-              HeroStorage.setOwnedHero(r.hero.id, v)
+              ViStorage.hero.setOwnedHero(r.hero.id, v)
 
               r.amount = v
             }
@@ -108,7 +108,7 @@ import {
 import { Plus, Minus, Avatar } from "@element-plus/icons-vue"
 import { Hero, vindictusHeroes } from "../components/hero/heroes.ts"
 import HeroDialog from "../components/hero/HeroDialog.vue"
-import { HeroStorage } from "../storage/hero.ts"
+import ViStorage from "../storage"
 
 const heroes = ref<HeroTableRow[]>(
   Array.from(vindictusHeroes.entries(), (v): HeroTableRow => {
@@ -117,21 +117,24 @@ const heroes = ref<HeroTableRow[]>(
       amount: 0,
     }
   }).concat(
-    ...Array.from(HeroStorage.customizedHeroes.values(), (v): HeroTableRow => {
-      return {
-        hero: v.clone(),
-        amount: 0,
-      }
-    }),
+    ...Array.from(
+      ViStorage.hero.customizedHeroes.values(),
+      (v): HeroTableRow => {
+        return {
+          hero: v.clone(),
+          amount: 0,
+        }
+      },
+    ),
   ),
 )
 const officialHeroMaxId = vindictusHeroes.size
 
-const customizedHeroId = ref(HeroStorage.customizedHeroId)
+const customizedHeroId = ref(ViStorage.hero.customizedHeroId)
 const dialogVisible = ref(false)
 
 onBeforeMount(() => {
-  const ownedHeroes = HeroStorage.ownedHeroes
+  const ownedHeroes = ViStorage.hero.ownedHeroes
   for (let hero of heroes.value) {
     const id = hero.hero.id
     hero.amount = ownedHeroes.get(id) ?? 0
@@ -141,7 +144,7 @@ onBeforeMount(() => {
 function addHero(v: Hero) {
   const hero = v.clone()
 
-  HeroStorage.addCustomizedHero(hero)
+  ViStorage.hero.addCustomizedHero(hero)
   heroes.value.push({
     hero: hero,
     amount: 0,
@@ -168,8 +171,8 @@ async function removeHero(hero: HeroTableRow, index: number) {
   if (confirm) {
     const removedHeroes = heroes.value.splice(index, 1)
     if (removedHeroes.length == 1) {
-      HeroStorage.removeCustomizedHero(removedHeroes[0].hero.id)
-      HeroStorage.setOwnedHero(removedHeroes[0].hero.id, 0)
+      ViStorage.hero.removeCustomizedHero(removedHeroes[0].hero.id)
+      ViStorage.hero.setOwnedHero(removedHeroes[0].hero.id, 0)
     }
 
     ElMessage({
@@ -180,7 +183,7 @@ async function removeHero(hero: HeroTableRow, index: number) {
 }
 
 function saveCustomizedHeroId(id: number) {
-  HeroStorage.customizedHeroId = id
+  ViStorage.hero.customizedHeroId = id
 }
 
 function heroImageURL(i: number): string {

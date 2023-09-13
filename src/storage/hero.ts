@@ -11,14 +11,14 @@ interface _Hero {
 }
 
 export class HeroStorage {
-  public static get valid(): boolean {
-    return window.localStorage != undefined
+  private storage: Storage
+
+  constructor(storage: Storage) {
+    this.storage = storage
   }
 
-  public static get customizedHeroes(): Map<number, Hero> {
-    if (!HeroStorage.valid) return new Map()
-
-    const data = window.localStorage.getItem(_customHeroesKey)
+  public get customizedHeroes(): Map<number, Hero> {
+    const data = this.storage.getItem(_customHeroesKey)
     if (data == null) return new Map()
 
     const result = new Map<number, Hero>()
@@ -28,76 +28,64 @@ export class HeroStorage {
     return result
   }
 
-  public static set customizedHeroes(heroes: Map<number, Hero>) {
-    if (!HeroStorage.valid) return
-    window.localStorage.setItem(
+  public set customizedHeroes(heroes: Map<number, Hero>) {
+    this.storage.setItem(
       _customHeroesKey,
       JSON.stringify(Array.from(heroes.entries())),
     )
   }
 
-  public static addCustomizedHero(hero: Hero): boolean {
-    if (!HeroStorage.valid) return false
-
-    const heroes = HeroStorage.customizedHeroes
+  public addCustomizedHero(hero: Hero): boolean {
+    const heroes = this.customizedHeroes
     if (heroes.get(hero.id) != undefined) return false
 
     heroes.set(hero.id, hero)
-    HeroStorage.customizedHeroes = heroes
+    this.customizedHeroes = heroes
     return true
   }
 
-  public static removeCustomizedHero(id: number): Hero | undefined {
-    if (!HeroStorage.valid) return undefined
-
-    const heroes = HeroStorage.customizedHeroes
+  public removeCustomizedHero(id: number): Hero | undefined {
+    const heroes = this.customizedHeroes
     const hero = heroes.get(id)
     heroes.delete(id)
-    HeroStorage.customizedHeroes = heroes
+    this.customizedHeroes = heroes
     return hero
   }
 
-  public static get customizedHeroId(): number | undefined {
-    if (!HeroStorage.valid) return undefined
-
-    const data = window.localStorage.getItem(_customHeroIdKey)
+  public get customizedHeroId(): number | undefined {
+    const data = this.storage.getItem(_customHeroIdKey)
     if (data == null) return undefined
     return Number(data)
   }
 
-  public static set customizedHeroId(id: number) {
-    if (!HeroStorage.valid) return
-    window.localStorage.setItem(_customHeroIdKey, id.toString())
+  public set customizedHeroId(id: number) {
+    this.storage.setItem(_customHeroIdKey, id.toString())
   }
 
-  public static get ownedHeroes(): Map<number, number> {
-    if (!HeroStorage.valid) return new Map()
-
-    const data = window.localStorage.getItem(_ownedHeroesKey)
+  public get ownedHeroes(): Map<number, number> {
+    const data = this.storage.getItem(_ownedHeroesKey)
     if (data == null) return new Map()
     return new Map(JSON.parse(data))
   }
 
-  public static set ownedHeroes(heroes: Map<number, number>) {
-    if (!HeroStorage.valid) return
-    window.localStorage.setItem(
+  public set ownedHeroes(heroes: Map<number, number>) {
+    this.storage.setItem(
       _ownedHeroesKey,
       JSON.stringify(Array.from(heroes.entries())),
     )
   }
 
-  public static setOwnedHero(id: number, amount: number) {
-    const heroes = HeroStorage.ownedHeroes
+  public setOwnedHero(id: number, amount: number) {
+    const heroes = this.ownedHeroes
     if (amount <= 0) {
       heroes.delete(id)
     } else {
       heroes.set(id, amount)
     }
-    HeroStorage.ownedHeroes = heroes
+    this.ownedHeroes = heroes
   }
 
-  public static clear() {
-    if (!HeroStorage.valid) return
-    window.localStorage.clear()
+  public clear() {
+    this.storage.clear()
   }
 }

@@ -121,7 +121,7 @@ import {
   ElButton,
 } from "element-plus"
 import { Hero, vindictusHeroes } from "./hero/heroes.ts"
-import { HeroStorage } from "../storage/hero"
+import ViStorage from "../storage"
 
 const difficultyOptions: DifficultyOption[] = [
   {
@@ -223,7 +223,7 @@ function calculateBestTeam(form: FormInstance | undefined) {
 
         const hero = vindictusHeroes.get(id)
         if (hero != undefined) return hero.name
-        return HeroStorage.customizedHeroes.get(id)?.name ?? ""
+        return ViStorage.hero.customizedHeroes.get(id)?.name ?? ""
       })
     })
   })

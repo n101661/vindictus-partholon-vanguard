@@ -3,7 +3,7 @@
     <el-aside width="auto">
       <el-menu
         router
-        default-active="calculate-best-teams"
+        :default-active="activeRouteName"
         :collapse="menuCollapse"
       >
         <el-button
@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import {
   ElContainer,
   ElAside,
@@ -42,13 +42,11 @@ import {
   ElIcon,
   ElButton,
 } from "element-plus"
-import {
-  Fold,
-  Expand,
-  Search,
-  Document,
-} from "@element-plus/icons-vue"
-import { RouterView } from "vue-router"
+import { Fold, Expand, Search, Document } from "@element-plus/icons-vue"
+import { RouterView, useRoute } from "vue-router"
 
 const menuCollapse = ref(false)
+const activeRouteName = computed(
+  (): string => useRoute().name?.toString() ?? "calculate-best-teams",
+)
 </script>

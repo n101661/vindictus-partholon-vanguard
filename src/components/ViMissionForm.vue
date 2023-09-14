@@ -4,12 +4,19 @@
     :model="missions"
     label-width="auto"
   >
-    <el-tabs v-model="selectedTabName">
+    <el-tabs
+      v-model="selectedTabIndex"
+      type="border-card"
+      :addable="missions.length < 5"
+      :closable="missions.length > 1"
+      @tab-add="handleTabsAdd"
+      @tab-remove="handleTabsRemove"
+    >
       <el-tab-pane
-        v-for="i in count"
+        v-for="i in missions.length"
         :key="'mission' + i"
         :label="'Mission ' + i"
-        :name="'mission' + i"
+        :name="i - 1"
       >
         <el-form-item
           label="Difficulty"
@@ -108,7 +115,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onBeforeMount, onBeforeUpdate } from "vue"
+import { ref, reactive, onBeforeMount } from "vue"
 import {
   FormInstance,
   ElForm,
@@ -119,6 +126,7 @@ import {
   ElOption,
   ElInput,
   ElButton,
+  TabPaneName,
 } from "element-plus"
 import { Hero, vindictusHeroes } from "./hero/heroes.ts"
 import ViStorage from "../storage"
@@ -148,18 +156,22 @@ const heroToSpecialties = new Map<number, string[]>(
 const specialtiesOptions = new Set<string>()
 
 const props = defineProps({
-  count: {
-    type: Number,
-    default: 1,
-  },
   heroes: {
     type: Array<number>,
     default: [] as number[],
   },
 })
 const formRef = ref<FormInstance>()
-const selectedTabName = ref("mission1")
-const missions = reactive<MissionWithTeammates[]>([])
+const selectedTabIndex = ref(0)
+const missions = reactive<MissionWithTeammates[]>([
+  {
+    difficulty: 0,
+    specialties: [],
+    heroSlots: 1,
+    grandDiscoveryPoints: 0,
+    teammates: [],
+  },
+])
 
 onBeforeMount(() => {
   vindictusHeroes.forEach((hero: Hero) => {
@@ -167,35 +179,31 @@ onBeforeMount(() => {
       if (v != "") specialtiesOptions.add(v)
     })
   })
-
-  for (let i = 0; i < props.count; i++) {
-    missions.push({
-      difficulty: 0,
-      specialties: [],
-      heroSlots: 1,
-      grandDiscoveryPoints: 0,
-      teammates: [],
-    })
-  }
 })
 
-onBeforeUpdate(() => {
-  if (missions.length > props.count) {
-    missions.splice(props.count, missions.length - props.count)
-    selectedTabName.value = "mission" + missions.length
-  } else {
-    const insufficiency = props.count - missions.length
-    for (let i = 0; i < insufficiency; i++) {
-      missions.push({
-        difficulty: 0,
-        specialties: [],
-        heroSlots: 1,
-        grandDiscoveryPoints: 0,
-        teammates: [],
-      })
+function handleTabsAdd() {
+  missions.push({
+    difficulty: 0,
+    specialties: [],
+    heroSlots: 1,
+    grandDiscoveryPoints: 0,
+    teammates: [],
+  })
+  selectedTabIndex.value = missions.length - 1
+}
+
+function handleTabsRemove(tabIndex: TabPaneName) {
+  if (typeof tabIndex === "string") {
+    throw new Error("not support string type for tab name")
+  }
+
+  if (tabIndex >= 0) {
+    if (selectedTabIndex.value == missions.length - 1) {
+      selectedTabIndex.value--
     }
+    missions.splice(tabIndex, 1)
   }
-})
+}
 
 function calculateBestTeam(form: FormInstance | undefined) {
   if (!form) return

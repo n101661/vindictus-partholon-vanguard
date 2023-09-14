@@ -8,7 +8,12 @@
       >
         <el-button
           style="width: 30px; height: 30px"
-          @click="menuCollapse = !menuCollapse"
+          @click="
+            () => {
+              menuCollapse = !menuCollapse
+              ViStorage.ux.menuCollapse = menuCollapse
+            }
+          "
         >
           <el-icon size="25px">
             <Fold v-if="menuCollapse" />
@@ -44,8 +49,9 @@ import {
 } from "element-plus"
 import { Fold, Expand, Search, Document } from "@element-plus/icons-vue"
 import { RouterView, useRoute } from "vue-router"
+import ViStorage from "./storage"
 
-const menuCollapse = ref(false)
+const menuCollapse = ref(ViStorage.ux.menuCollapse)
 const activeRouteName = computed(
   (): string => useRoute().name?.toString() ?? "calculate-best-teams",
 )

@@ -127,6 +127,7 @@ import {
   ElInput,
   ElButton,
   TabPaneName,
+  ElLoading,
 } from "element-plus"
 import { Hero, vindictusHeroes } from "./hero/heroes.ts"
 import ViStorage from "../storage"
@@ -205,33 +206,49 @@ function handleTabsRemove(tabIndex: TabPaneName) {
   }
 }
 
+const loading = ElLoading.service({
+  lock: true,
+  fullscreen: true,
+  visible: false,
+})
+
+function loadingAnimation(f: () => void) {
+  loading.visible.value = true
+  setTimeout(() => {
+    f()
+    loading.visible.value = false
+  }, 0)
+}
+
 function calculateBestTeam(form: FormInstance | undefined) {
   if (!form) return
 
   form.validate((valid: boolean) => {
     if (!valid) return
 
-    const bestTeams = calBestTeams(
-      missions.map((mission): Mission => {
-        return {
-          difficulty: mission.difficulty,
-          specialties: mission.specialties,
-          heroSlots: mission.heroSlots,
-          grandDiscoveryPoints: mission.grandDiscoveryPoints,
-        }
-      }),
-      props.heroes.map((id): string[] => {
-        return heroToSpecialties.get(id) ?? []
-      }),
-    )
+    loadingAnimation(() => {
+      const bestTeams = calBestTeams(
+        missions.map((mission): Mission => {
+          return {
+            difficulty: mission.difficulty,
+            specialties: mission.specialties,
+            heroSlots: mission.heroSlots,
+            grandDiscoveryPoints: mission.grandDiscoveryPoints,
+          }
+        }),
+        props.heroes.map((id): string[] => {
+          return heroToSpecialties.get(id) ?? []
+        }),
+      )
 
-    bestTeams.forEach((heroIndices, i) => {
-      missions[i].teammates = heroIndices.map((j): string => {
-        const id = props.heroes[j]
+      bestTeams.forEach((heroIndices, i) => {
+        missions[i].teammates = heroIndices.map((j): string => {
+          const id = props.heroes[j]
 
-        const hero = vindictusHeroes.get(id)
-        if (hero != undefined) return hero.name
-        return ViStorage.hero.customizedHeroes.get(id)?.name ?? ""
+          const hero = vindictusHeroes.get(id)
+          if (hero != undefined) return hero.name
+          return ViStorage.hero.customizedHeroes.get(id)?.name ?? ""
+        })
       })
     })
   })

@@ -1,4 +1,4 @@
-import { Hero } from "../components/hero/heroes"
+import { Hero } from "../models/hero"
 
 const _customHeroesKey = "custom-heroes"
 const _customHeroIdKey = "custom-hero.id"

@@ -151,7 +151,13 @@ import {
   ElTag,
   ElTooltip,
 } from "element-plus"
-import { Hero, vindictusHeroes } from "./hero/heroes.ts"
+import { Hero } from "../models/hero.ts"
+import {
+  Mission,
+  MissionWithTeammates,
+  MissionDifficulty,
+} from "../models/mission"
+import { vindictusHeroes } from "./hero/heroes.ts"
 import ViStorage from "../storage"
 
 const difficultyOptions: DifficultyOption[] = [
@@ -291,20 +297,9 @@ function calculateBestTeam(form: FormInstance | undefined) {
 </script>
 
 <script lang="ts">
-interface Mission {
-  difficulty: -2 | 0 | 2
-  specialties: string[]
-  heroSlots: 1 | 2 | 3
-  grandDiscoveryPoints: number
-}
-
-interface MissionWithTeammates extends Mission {
-  teammates: Hero[]
-}
-
 interface DifficultyOption {
   label: string
-  value: -2 | 0 | 2
+  value: MissionDifficulty
 }
 
 function calBestTeams(

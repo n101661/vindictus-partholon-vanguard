@@ -106,7 +106,8 @@ import {
   ElMessageBox,
 } from "element-plus"
 import { Plus, Minus, Avatar } from "@element-plus/icons-vue"
-import { Hero, vindictusHeroes } from "../components/hero/heroes.ts"
+import { Hero } from "../models/hero"
+import { vindictusHeroes } from "../components/hero/heroes.ts"
 import HeroDialog from "../components/hero/HeroDialog.vue"
 import ViStorage from "../storage"
 

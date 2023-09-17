@@ -77,7 +77,8 @@ import {
   ElOption,
   ElButton,
 } from "element-plus"
-import { vindictusHeroes, Hero } from "./heroes.ts"
+import { Hero } from "../../models/hero"
+import { vindictusHeroes } from "./heroes.ts"
 
 const props = defineProps({
   modelValue: {

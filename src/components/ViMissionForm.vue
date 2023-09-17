@@ -99,9 +99,29 @@
         </el-form-item>
         <el-form-item
           label="Teammates"
-          :prop="i - 1 + '.teammates'"
+          :prop="i - 1 + '.teammates.name'"
         >
-          {{ missions[i - 1].teammates }}
+          <el-text v-if="missions[i - 1].teammates.length === 0">
+            No Hero
+          </el-text>
+          <el-tooltip
+            v-for="hero of missions[i - 1].teammates"
+            :key="'mission' + (i - 1) + '-' + hero.id"
+            :content="
+              hero.specialties.reduce((previous, current): string => {
+                if (previous !== '') previous += ' '
+                return previous + current
+              }, '')
+            "
+            :disabled="hero.specialties.length === 0"
+          >
+            <el-tag
+              :type="hero.specialties.length === 0 ? 'info' : ''"
+              style="margin-right: 2px"
+            >
+              {{ hero.name }}
+            </el-tag>
+          </el-tooltip>
         </el-form-item>
       </el-tab-pane>
     </el-tabs>
@@ -116,8 +136,8 @@
 
 <script lang="ts" setup>
 import { ref, reactive, onBeforeMount } from "vue"
+import type { FormInstance, TabPaneName } from "element-plus"
 import {
-  FormInstance,
   ElForm,
   ElTabs,
   ElTabPane,
@@ -126,8 +146,10 @@ import {
   ElOption,
   ElInput,
   ElButton,
-  TabPaneName,
   ElLoading,
+  ElText,
+  ElTag,
+  ElTooltip,
 } from "element-plus"
 import { Hero, vindictusHeroes } from "./hero/heroes.ts"
 import ViStorage from "../storage"
@@ -242,12 +264,25 @@ function calculateBestTeam(form: FormInstance | undefined) {
       )
 
       bestTeams.forEach((heroIndices, i) => {
-        missions[i].teammates = heroIndices.map((j): string => {
+        missions[i].teammates = heroIndices.map((j): Hero => {
           const id = props.heroes[j]
 
-          const hero = vindictusHeroes.get(id)
-          if (hero != undefined) return hero.name
-          return ViStorage.hero.customizedHeroes.get(id)?.name ?? ""
+          let hero = vindictusHeroes.get(id)
+          if (hero !== undefined) {
+            hero = hero.clone()
+          } else {
+            hero =
+              ViStorage.hero.customizedHeroes.get(id)?.clone() ??
+              new Hero(-1, "unknown", [])
+          }
+
+          const sp = new Map<string, boolean>()
+          missions[i].specialties.forEach((v) => {
+            sp.set(v, true)
+          })
+          hero.specialties = hero.specialties.filter((v) => sp.get(v))
+
+          return hero
         })
       })
     })
@@ -264,7 +299,7 @@ interface Mission {
 }
 
 interface MissionWithTeammates extends Mission {
-  teammates: string[]
+  teammates: Hero[]
 }
 
 interface DifficultyOption {

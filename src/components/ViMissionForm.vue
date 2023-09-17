@@ -132,10 +132,32 @@
   >
     Submit
   </el-button>
+  <el-button
+    type="danger"
+    @click="
+      ElMessageBox.confirm('reset all missions?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning',
+      }).then(() => {
+        selectedTabIndex = 0
+        missions.splice(1)
+        missions[0] = {
+          difficulty: 0,
+          specialties: [],
+          heroSlots: 1,
+          grandDiscoveryPoints: 0,
+          teammates: [],
+        }
+      })
+    "
+  >
+    Reset
+  </el-button>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, onBeforeMount } from "vue"
+import { ref, reactive, onBeforeMount, watch } from "vue"
 import type { FormInstance, TabPaneName } from "element-plus"
 import {
   ElForm,
@@ -150,6 +172,7 @@ import {
   ElText,
   ElTag,
   ElTooltip,
+  ElMessageBox,
 } from "element-plus"
 import { Hero } from "../models/hero.ts"
 import {
@@ -192,15 +215,22 @@ const props = defineProps({
 })
 const formRef = ref<FormInstance>()
 const selectedTabIndex = ref(0)
-const missions = reactive<MissionWithTeammates[]>([
-  {
-    difficulty: 0,
-    specialties: [],
-    heroSlots: 1,
-    grandDiscoveryPoints: 0,
-    teammates: [],
-  },
-])
+const missions = reactive<MissionWithTeammates[]>(
+  ViStorage.ux.missions.length === 0
+    ? [
+        {
+          difficulty: 0,
+          specialties: [],
+          heroSlots: 1,
+          grandDiscoveryPoints: 0,
+          teammates: [],
+        },
+      ]
+    : ViStorage.ux.missions,
+)
+watch(missions, (current) => {
+  ViStorage.ux.missions = current
+})
 
 onBeforeMount(() => {
   vindictusHeroes.forEach((hero: Hero) => {

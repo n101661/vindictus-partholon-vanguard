@@ -40,4 +40,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v2
         with:
-          artifact_name: ${{ runner.temp }}/artifact.tar
+          artifact_name: vindictus-partholon-vanguard

@@ -2,8 +2,6 @@ name: build app with yarn
 on:
   push:
     branches: ["main"]
-  pull_request:
-    branches: ["main"]
 jobs:
   build:
     runs-on: ubuntu-latest
